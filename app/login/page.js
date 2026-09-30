@@ -5,9 +5,19 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { getSupabaseBrowserClient } from '../../lib/supabaseClient';
 
+function GlobeIcon() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <circle cx="12" cy="12" r="10" />
+      <line x1="2" y1="12" x2="22" y2="12" />
+      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+    </svg>
+  );
+}
+
 export default function LoginPage() {
   const router = useRouter();
-  const [identifier, setIdentifier] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
@@ -18,42 +28,67 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      let email = identifier.trim().toLowerCase();
-      if (!email.includes('@')) {
-        const response = await fetch('/api/auth/resolve-login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username: identifier.trim() })
-        });
-        const body = await response.json();
-        if (!response.ok) throw new Error(body.error || 'Unable to find username.');
-        email = body.email;
-      }
-
       const supabase = getSupabaseBrowserClient();
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      const { error } = await supabase.auth.signInWithPassword({
+        email: email.trim().toLowerCase(),
+        password
+      });
       if (error) throw error;
 
       router.push('/');
       router.refresh();
     } catch (error) {
-      setMessage(error.message || 'Incorrect email/username or password.');
+      setMessage(error.message || 'Invalid email or password.');
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <section className="page-shell form-page">
-      <form className="form-card" onSubmit={submit}>
-        <span className="eyebrow">Functional Requirements 3-4</span>
-        <h1>Login</h1>
-        <label>Email or Username<input required value={identifier} onChange={(e) => setIdentifier(e.target.value)} /></label>
-        <label>Password<input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} /></label>
-        {message && <p className="form-message">{message}</p>}
-        <button className="button primary full" disabled={loading}>{loading ? 'Logging in...' : 'Login'}</button>
-        <p className="muted">Need an account? <Link href="/signup">Create one</Link>.</p>
-      </form>
+    <section className="auth-page page-shell">
+      <div className="auth-panel prototype-card auth-card-prototype">
+        <div className="auth-heading">
+          <span className="auth-icon auth-svg-icon"><GlobeIcon /></span>
+          <h1>Welcome back</h1>
+          <p>Sign in to save scores and track your history</p>
+        </div>
+
+        {message && <div className="auth-error">{message}</div>}
+
+        <form className="form-card auth-form-clean" onSubmit={submit}>
+          <label>
+            Email
+            <input
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@example.com"
+            />
+          </label>
+          <label>
+            Password
+            <input
+              type="password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
+            />
+          </label>
+          <button className="button primary full" disabled={loading}>
+            {loading ? 'Signing in...' : 'Sign In'}
+          </button>
+        </form>
+
+        <div className="auth-demo-note">
+          Use your Supabase account credentials to sign in.
+        </div>
+
+        <div className="auth-divider"><span>or</span></div>
+        <p className="auth-switch">New to Where&apos;s the News? <Link href="/signup">Create an account</Link></p>
+        <Link className="auth-guest-link" href="/play">Continue as guest →</Link>
+      </div>
     </section>
   );
 }

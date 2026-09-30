@@ -29,10 +29,8 @@ export default function CesiumPreview() {
           infoBox: false,
           selectionIndicator: false
         });
-        viewer.camera.setView({
-          destination: Cesium.Cartesian3.fromDegrees(-15, 24, 23000000)
-        });
-      } catch (e) {
+        viewer.camera.setView({ destination: Cesium.Cartesian3.fromDegrees(-15, 24, 23000000) });
+      } catch {
         setError('CesiumJS preview could not load. Install dependencies and restart the dev server.');
       }
     }
@@ -45,13 +43,16 @@ export default function CesiumPreview() {
   }, []);
 
   return (
-    <div className="cesium-card">
+    <div className="cesium-card prototype-card">
       <div className="cesium-heading">
-        <div><strong>CesiumJS map technology preview</strong><p>Map-based guessing will be implemented in the next milestone.</p></div>
+        <div>
+          <strong>Interactive World Map</strong>
+          <p>Use the globe to explore the map experience for the game.</p>
+        </div>
         <span className="chip">CesiumJS</span>
       </div>
       <div ref={containerRef} className="cesium-container" />
-      {error && <p className="form-message">{error}</p>}
+      {error && <p className="form-message cesium-error">{error}</p>}
     </div>
   );
 }

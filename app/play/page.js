@@ -1,92 +1,83 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import CesiumPreview from '../../components/CesiumPreview';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
-const dailyStages = [
-  'Headline 1',
-  'Headline 2',
-  'Headline 3',
-  'Headline 4',
-  'Headline 5'
+const modes = [
+  {
+    id: 'historical', name: 'Historical', icon: '🏛️', subtitle: 'Pre-2000 Events',
+    description: "Journey through time. From ancient Rome to the Cold War, test how well you know the locations of history's most defining moments.",
+    examples: ['Fall of the Berlin Wall', 'D-Day Landings', 'Hiroshima', 'Battle of Waterloo', 'First Airplane Flight']
+  },
+  {
+    id: 'current', name: 'Current Events', icon: '📰', subtitle: '2011 – Present',
+    description: 'Can you keep up with the news? Pin the locations behind the headlines that have shaped our recent world.',
+    examples: ['Iceland Volcano (2024)', 'Turkey Earthquake (2023)', 'Suez Canal Blockage', 'Amazon Flooding', 'Ukraine Crisis']
+  },
+  {
+    id: 'default', name: 'Mixed', icon: '🌍', subtitle: 'All Eras',
+    description: 'The complete challenge. Any event, any era, any corner of the world. Best for the geographically adventurous.',
+    examples: ['Eclectic mix', 'All categories', 'All time periods', 'Global locations', 'Surprise every time']
+  }
 ];
 
 export default function PlayPage() {
-  const [modes, setModes] = useState([]);
+  const router = useRouter();
   const [selected, setSelected] = useState('');
 
-  useEffect(() => {
-    fetch('/api/modes').then((r) => r.json()).then((body) => setModes(body.modes || []));
-  }, []);
+  function startGame() {
+    if (!selected) return;
+    window.sessionStorage.setItem('wtn-game-mode', selected);
+    router.push('/play/game');
+  }
 
   return (
-    <section className="page-shell play-page">
-      <div className="section-heading">
-        <span className="eyebrow">Functional Requirements 5-7</span>
-        <h1>Choose a Game Mode</h1>
-        <p>Historical and Current modes are implemented for this 35% milestone.</p>
+    <section className="page-shell play-page prototype-play-page">
+      <div className="play-heading">
+        <h1>Choose Your Mode</h1>
+        <p>Select a category, then place your pins across 5 events. Maximum score: 5,000 points.</p>
+        <p className="guest-note">Playing as guest. <Link href="/login">Sign in</Link> to save your scores.</p>
       </div>
 
-      <div className="mode-grid">
-        {modes.map((mode) => (
-          <button
-            key={mode.id}
-            disabled={!mode.enabled}
-            onClick={() => setSelected(mode.id)}
-            className={`mode-card ${selected === mode.id ? 'selected' : ''}`}
-          >
-            <span className="mode-icon">{mode.id === 'historical' ? '◷' : mode.id === 'current' ? '●' : '◎'}</span>
-            <strong>{mode.name}</strong>
-            <span>{mode.id === 'historical' ? 'Historical news and events' : mode.id === 'current' ? 'Recent news and events' : 'Historical + current events'}</span>
-            {!mode.enabled && <small>{mode.note}</small>}
-          </button>
-        ))}
+      <div className="prototype-mode-grid">
+        {modes.map((mode) => {
+          const isSelected = selected === mode.id;
+          return (
+            <button
+              type="button"
+              key={mode.id}
+              onClick={() => setSelected(mode.id)}
+              className={`prototype-mode-card ${isSelected ? 'selected' : ''}`}
+            >
+              <div className="mode-card-icon">{mode.icon}</div>
+              <h3>{mode.name}</h3>
+              <div className="mode-card-subtitle">{mode.subtitle}</div>
+              <p>{mode.description}</p>
+              <div className="sample-events-title">Sample events</div>
+              <div className="sample-events-list">
+                {mode.examples.map((example) => <span key={example}>• {example}</span>)}
+              </div>
+              {isSelected && <div className="selected-label">✓ Selected</div>}
+            </button>
+          );
+        })}
       </div>
 
-      {selected && (
-        <div className="selection-banner">
-          <strong>{selected === 'historical' ? 'Historical' : 'Current'} mode selected.</strong>
-          <span>The five-headline daily challenge is previewed below. Guess submission and scoring are intentionally reserved for the next milestone.</span>
+      <div className="scoring-card prototype-card">
+        <h3>How scoring works</h3>
+        <div className="scoring-grid">
+          <div><span>&lt; 50 km</span><strong>1,000 pts</strong></div>
+          <div><span>&lt; 500 km</span><strong>700+ pts</strong></div>
+          <div><span>&lt; 2,000 km</span><strong>250+ pts</strong></div>
+          <div><span>5,000+ km</span><strong>&lt; 50 pts</strong></div>
         </div>
-      )}
+      </div>
 
-      <section className="daily-preview">
-        <div className="daily-preview-header">
-          <div>
-            <span className="eyebrow">Gameplay scaffold</span>
-            <h2>Daily News Challenge</h2>
-            <p>Five headlines from around the globe. Each round will be worth 0-1,000 points based on distance from the correct location.</p>
-          </div>
-          <div className="daily-max-score">
-            <strong>5,000</strong>
-            <span>maximum daily score</span>
-          </div>
-        </div>
-
-        <div className="stage-row" aria-label="five daily headline stages">
-          {dailyStages.map((stage, index) => (
-            <div className={`stage-pill ${index === 0 ? 'active' : ''}`} key={stage}>
-              <span>{index + 1}</span>
-              <small>{stage}</small>
-            </div>
-          ))}
-        </div>
-
-        <div className="headline-preview-card">
-          <div>
-            <span className="chip">Preview only</span>
-            <h3>AI-processed headline clue will appear here</h3>
-            <p>The Python ingestion script will collect the source headline, and the AI processing step will summarize it in English while removing direct location giveaways.</p>
-          </div>
-          <div className="points-preview">
-            <span>Round score</span>
-            <strong>0-1000</strong>
-            <small>Closer guess = more points</small>
-          </div>
-        </div>
-      </section>
-
-      <CesiumPreview />
+      <div className="play-actions">
+        <button type="button" onClick={startGame} className="button primary start-game-button" disabled={!selected}>Start Game →</button>
+        <Link href="/" className="back-link">← Back to Home</Link>
+      </div>
     </section>
   );
 }

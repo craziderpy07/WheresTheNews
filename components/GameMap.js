@@ -14,12 +14,13 @@ export default function GameMap({ onGuess, guess }) {
 
     async function setup() {
       try {
-        const basePath = process.env.NODE_ENV === 'production' ? '/WheresTheNews' : '';
-        window.CESIUM_BASE_URL = `${basePath}/cesium/`;
+        // Vercel serves the app from the site root, so Cesium's static assets
+        // are available at /cesium/* (copied there by scripts/copy-cesium.mjs).
+        window.CESIUM_BASE_URL = '/cesium/';
+
         const Cesium = await import('cesium');
         if (cancelled || !containerRef.current) return;
 
-        Cesium.Ion.defaultAccessToken = '';
         const viewer = new Cesium.Viewer(containerRef.current, {
           baseLayer: false,
           terrainProvider: new Cesium.EllipsoidTerrainProvider(),
@@ -31,15 +32,37 @@ export default function GameMap({ onGuess, guess }) {
           navigationHelpButton: false,
           fullscreenButton: false,
           infoBox: false,
-          selectionIndicator: false
+          selectionIndicator: false,
+          baseLayerPicker: false,
         });
+
         viewerRef.current = viewer;
-        viewer.camera.setView({ destination: Cesium.Cartesian3.fromDegrees(-15, 24, 23000000) });
+
+        // Use Cesium's bundled Natural Earth imagery so the globe renders
+        // without a Cesium ion token or any third-party map key.
+        const imageryProvider = await Cesium.TileMapServiceImageryProvider.fromUrl(
+          '/cesium/Assets/Textures/NaturalEarthII',
+        );
+        viewer.imageryLayers.addImageryProvider(imageryProvider);
+
+        viewer.scene.globe.show = true;
+        viewer.scene.globe.enableLighting = false;
+        viewer.scene.skyAtmosphere.show = true;
+        viewer.scene.backgroundColor = Cesium.Color.fromCssColorString('#dce9ef');
+
+        // Start with a full-globe view.
+        viewer.camera.setView({
+          destination: Cesium.Cartesian3.fromDegrees(-15, 20, 22000000),
+        });
 
         handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
         handler.setInputAction((movement) => {
-          const cartesian = viewer.camera.pickEllipsoid(movement.position, viewer.scene.globe.ellipsoid);
+          const cartesian = viewer.camera.pickEllipsoid(
+            movement.position,
+            viewer.scene.globe.ellipsoid,
+          );
           if (!cartesian) return;
+
           const cartographic = Cesium.Cartographic.fromCartesian(cartesian);
           const lat = Cesium.Math.toDegrees(cartographic.latitude);
           const lng = Cesium.Math.toDegrees(cartographic.longitude);
@@ -49,25 +72,42 @@ export default function GameMap({ onGuess, guess }) {
           pinRef.current = viewer.entities.add({
             position: Cesium.Cartesian3.fromDegrees(lng, lat),
             point: {
-              pixelSize: 15,
-              color: Cesium.Color.fromCssColorString('#0E5F8A'),
+              pixelSize: 16,
+              color: Cesium.Color.fromCssColorString('#F59E0B'),
               outlineColor: Cesium.Color.WHITE,
               outlineWidth: 3,
-              heightReference: Cesium.HeightReference.CLAMP_TO_GROUND
-            }
+              disableDepthTestDistance: Number.POSITIVE_INFINITY,
+            },
+            label: {
+              text: 'Your Guess',
+              font: '600 13px sans-serif',
+              fillColor: Cesium.Color.WHITE,
+              outlineColor: Cesium.Color.fromCssColorString('#7C2D12'),
+              outlineWidth: 3,
+              style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+              pixelOffset: new Cesium.Cartesian2(0, 24),
+              disableDepthTestDistance: Number.POSITIVE_INFINITY,
+            },
           });
         }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
-      } catch {
-        setError('The interactive map could not load. Install dependencies and restart the development server.');
+      } catch (err) {
+        console.error('Cesium map failed to initialize:', err);
+        setError(
+          'The globe could not load. Check that /cesium/Assets, /cesium/Workers, /cesium/Widgets, and /cesium/ThirdParty are available in this deployment.',
+        );
       }
     }
 
     setup();
+
     return () => {
       cancelled = true;
       handler?.destroy();
-      if (viewerRef.current && !viewerRef.current.isDestroyed()) viewerRef.current.destroy();
+      if (viewerRef.current && !viewerRef.current.isDestroyed()) {
+        viewerRef.current.destroy();
+      }
       viewerRef.current = null;
+      pinRef.current = null;
     };
   }, [onGuess]);
 

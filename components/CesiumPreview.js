@@ -15,7 +15,7 @@ export default function CesiumPreview() {
         window.CESIUM_BASE_URL = '/cesium/';
         const Cesium = await import('cesium');
         if (cancelled || !containerRef.current) return;
-        Cesium.Ion.defaultAccessToken = '';
+
         viewer = new Cesium.Viewer(containerRef.current, {
           baseLayer: false,
           terrainProvider: new Cesium.EllipsoidTerrainProvider(),
@@ -27,11 +27,25 @@ export default function CesiumPreview() {
           navigationHelpButton: false,
           fullscreenButton: false,
           infoBox: false,
-          selectionIndicator: false
+          selectionIndicator: false,
+          baseLayerPicker: false,
         });
-        viewer.camera.setView({ destination: Cesium.Cartesian3.fromDegrees(-15, 24, 23000000) });
-      } catch {
-        setError('CesiumJS preview could not load. Install dependencies and restart the dev server.');
+
+        const imageryProvider = await Cesium.TileMapServiceImageryProvider.fromUrl(
+          '/cesium/Assets/Textures/NaturalEarthII',
+        );
+        viewer.imageryLayers.addImageryProvider(imageryProvider);
+
+        viewer.scene.globe.show = true;
+        viewer.scene.globe.enableLighting = false;
+        viewer.scene.skyAtmosphere.show = true;
+        viewer.scene.backgroundColor = Cesium.Color.fromCssColorString('#dce9ef');
+        viewer.camera.setView({
+          destination: Cesium.Cartesian3.fromDegrees(-15, 20, 22000000),
+        });
+      } catch (err) {
+        console.error('Cesium preview failed to initialize:', err);
+        setError('CesiumJS preview could not load. Check the browser console for details.');
       }
     }
 

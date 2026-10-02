@@ -1,2 +1,5 @@
 requests>=2.32.0
 supabase>=2.18.0
+beautifulsoup4
+python-dotenv
+google-genai

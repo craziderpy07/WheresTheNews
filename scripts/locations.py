@@ -1,7 +1,7 @@
 import re
 from math import radians, sin, cos, sqrt, atan2
-
-from wikipedia import session, WIKI_API
+import time
+from wikipedia import wiki_get
 
 
 LOCATION_TYPES = {
@@ -34,13 +34,9 @@ def resolve_locations(titles):
         "formatversion": 2,
     }
 
-    response = session.get(
-        WIKI_API,
-        params=params,
-        timeout=30
-    )
+    response = wiki_get(params)
 
-    response.raise_for_status()
+    time.sleep(0.15)
 
     data = response.json()
 

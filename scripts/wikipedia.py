@@ -2,6 +2,7 @@ import requests
 import re
 from bs4 import BeautifulSoup
 from urllib.parse import unquote
+import time
 
 WIKI_API = "https://en.wikipedia.org/w/api.php"
 
@@ -11,6 +12,49 @@ session.headers.update({
     "User-Agent": "WheresTheNews/0.1 (your-email@example.com)"
 })
 
+def wiki_get(params, max_retries=6):
+    for attempt in range(max_retries):
+        response = session.get(
+            WIKI_API,
+            params=params,
+            timeout=30
+        )
+
+        if response.status_code == 429:
+            retry_after = response.headers.get("Retry-After")
+
+            if retry_after:
+                wait_time = int(retry_after)
+            else:
+                wait_time = min(2 ** attempt, 60)
+
+            print(
+                f"Wikipedia rate limit hit. "
+                f"Waiting {wait_time} seconds..."
+            )
+
+            time.sleep(wait_time)
+            continue
+
+        # Sometimes Wikimedia can temporarily fail
+        if response.status_code in {500, 502, 503, 504}:
+            wait_time = min(2 ** attempt, 60)
+
+            print(
+                f"Wikipedia server error "
+                f"{response.status_code}. "
+                f"Retrying in {wait_time} seconds..."
+            )
+
+            time.sleep(wait_time)
+            continue
+
+        response.raise_for_status()
+        return response
+
+    raise RuntimeError(
+        "Wikipedia request failed after retries."
+    )
 
 def get_current_events_page(day):
     page = f"Portal:Current events/{day.year} {day.strftime('%B')} {day.day}"
@@ -24,13 +68,7 @@ def get_current_events_page(day):
         "disableeditsection": 1,
     }
 
-    response = session.get(
-        WIKI_API,
-        params=params,
-        timeout=30
-    )
-
-    response.raise_for_status()
+    response = wiki_get(params)
 
     data = response.json()
 

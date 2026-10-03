@@ -213,4 +213,4 @@ def process_day(day):
 
 
 if __name__ == "__main__":
-    process_day(date(2026, 9, 28))
+    process_day(date.today())

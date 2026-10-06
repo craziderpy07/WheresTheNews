@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import GameMap from '../../components/GameMap';
+import GameMap, { loadGameGlobe } from '../../components/GameMap';
 import { GAME_MODES, ROUND_COUNT, getChallengeDate, isValidCoordinates } from '../../lib/gameRules';
 
 const ACTIVE_GAME_KEY = 'wtn-active-game';
@@ -73,6 +73,7 @@ export default function PlayPage() {
 
   // resumes the next unfinished round or brings back the finished results
   useEffect(() => {
+    loadGameGlobe().catch(() => {});
     const date = getChallengeDate();
     let saved = readSavedGame(ACTIVE_GAME_KEY);
     if (saved && saved.type === 'daily') saved = readDailyCompletion(saved.date) || saved;

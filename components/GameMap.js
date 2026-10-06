@@ -2,6 +2,11 @@
 
 import { useEffect, useRef, useState } from 'react';
 
+export function loadGameGlobe() {
+  window.CESIUM_BASE_URL = process.env.NEXT_PUBLIC_CESIUM_BASE_URL;
+  return import('../lib/cesium');
+}
+
 export default function GameMap({ guess, answer, locked, roundKey, onGuess }) {
   const containerRef = useRef(null);
   const runtimeRef = useRef(null);
@@ -23,16 +28,14 @@ export default function GameMap({ guess, answer, locked, roundKey, onGuess }) {
 
     async function setup() {
       try {
-        window.CESIUM_BASE_URL = '/cesium/';
-        const Cesium = await import('cesium');
+        const Cesium = await loadGameGlobe();
         if (cancelled) return;
 
         // makes the globe and turns off the extra buttons
         // https://cesium.com/learn/cesiumjs/ref-doc/Viewer.html
         viewer = new Cesium.Viewer(containerRef.current, { baseLayer: false, baseLayerPicker: false, terrainProvider: new Cesium.EllipsoidTerrainProvider(), animation: false, timeline: false, geocoder: false, homeButton: false, sceneModePicker: false, navigationHelpButton: false, fullscreenButton: false, infoBox: false, selectionIndicator: false });
 
-        const imagery = await Cesium.TileMapServiceImageryProvider.fromUrl('/cesium/Assets/Textures/NaturalEarthII');
-        if (cancelled) return;
+        const imagery = new Cesium.UrlTemplateImageryProvider({ url: `${process.env.NEXT_PUBLIC_CESIUM_BASE_URL}Assets/Textures/NaturalEarthII/{z}/{x}/{reverseY}.jpg`, tilingScheme: new Cesium.GeographicTilingScheme(), maximumLevel: 2, hasAlphaChannel: false });
         viewer.imageryLayers.addImageryProvider(imagery);
         // gets map tiles from openstreetmap so zooming in loads more detail and place names
         // https://cesium.com/learn/cesiumjs/ref-doc/OpenStreetMapImageryProvider.html

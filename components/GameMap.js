@@ -1,10 +1,11 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { loadCesium } from '../lib/cesium';
 
 export function loadGameGlobe() {
   window.CESIUM_BASE_URL = process.env.NEXT_PUBLIC_CESIUM_BASE_URL;
-  return import('../lib/cesium');
+  return loadCesium();
 }
 
 export default function GameMap({ guess, answer, locked, roundKey, onGuess }) {

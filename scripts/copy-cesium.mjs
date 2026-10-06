@@ -9,4 +9,5 @@ await mkdir(target, { recursive: true });
 for (const dir of ['Assets', 'ThirdParty', 'Widgets', 'Workers']) {
   await cp(join(source, dir), join(target, dir), { recursive: true });
 }
+await cp(join(source, 'Cesium.js'), join(target, 'Cesium.js'));
 console.log('Cesium static assets copied to public/cesium.');

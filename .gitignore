@@ -1,5 +1,6 @@
 node_modules/
 .next/
+public/cesium/Cesium.js
 .env.local
 .env
 *.log

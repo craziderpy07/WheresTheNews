@@ -8,6 +8,7 @@ Each game consists of five stages. Players earn points based on how close their 
 
 - Browser-based geography and news game
 - Five stages per game
+- Progress saves in the current browser after each confirmed guess and resumes at the next unfinished round when you return.
 - Current and historical news events
 - Interactive 3D world map
 - Location-based guessing

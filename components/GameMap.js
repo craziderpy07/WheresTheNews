@@ -140,7 +140,7 @@ export default function GameMap({ guess, answer, locked, roundKey, onGuess }) {
           <p>Drag with either mouse button to rotate. Scroll or pinch to zoom. Click or tap to place your pin.</p>
         </div>
       </div>
-      {!ready && !error && <p className="cesium-heading" role="status">Loading the globe...</p>}
+      {!ready && !error && <p className="cesium-heading" role="status">Still loading the globe...</p>}
       {error && <p className="form-message cesium-heading" role="alert">{error}</p>}
       <div ref={containerRef} className="cesium-container" />
     </div>

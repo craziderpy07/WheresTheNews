@@ -26,7 +26,7 @@ export default function LoginPage() {
           body: JSON.stringify({ username: identifier.trim() })
         });
         const body = await response.json();
-        if (!response.ok) throw new Error(body.error || 'Unable to find username.');
+        if (!response.ok) throw new Error(body.error || 'Unable to find username. Please enter a valid username.');
         email = body.email;
       }
 
@@ -37,7 +37,7 @@ export default function LoginPage() {
       router.push('/');
       router.refresh();
     } catch (error) {
-      setMessage(error.message || 'Incorrect email/username or password.');
+      setMessage(error.message || 'Incorrect email/username or password. Please enter a valid email/username or password.');
     } finally {
       setLoading(false);
     }

@@ -65,7 +65,7 @@ export default function SignupPage() {
         router.refresh();
       } else {
         setMessage(
-          'Account created. Check your email if email confirmation is enabled in Supabase.'
+          'Your account has been created! Please attempt to log in.'
         );
       }
     } catch (error) {
@@ -103,6 +103,7 @@ export default function SignupPage() {
             onChange={update}
           />
         </label>
+        <label>Make sure the username is unique.</label>
 
         <label>
           Password

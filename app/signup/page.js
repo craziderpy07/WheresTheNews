@@ -96,7 +96,7 @@ export default function SignupPage() {
 
         <label>
           Username
-          <label>Make sure the username is unique.</label>
+          <p>Make sure the username is unique.</p>
           <input
             name="username"
             required
@@ -107,6 +107,7 @@ export default function SignupPage() {
 
         <label>
           Password
+          <p>Your password must be longer than 6 characters.</p>
           <input
             name="password"
             type="password"

@@ -48,8 +48,8 @@ export default function LoginPage() {
       <form className="form-card" onSubmit={submit}>
         <span className="eyebrow">Functional Requirements 3-4</span>
         <h1>Login</h1>
-        <label>Email or Username<input required value={identifier} onChange={(e) => setIdentifier(e.target.value)} /></label>
-        <label>Password<input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} /></label>
+        <label>Email or Username (email: demo@gmail.com / username: demo)<input required value={identifier} onChange={(e) => setIdentifier(e.target.value)} /></label>
+        <label>Password (password: demo123)<input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} /></label>
         {message && <p className="form-message">{message}</p>}
         <button className="button primary full" disabled={loading}>{loading ? 'Logging in...' : 'Login'}</button>
         <p className="muted">Need an account? <Link href="/signup">Create one</Link>.</p>

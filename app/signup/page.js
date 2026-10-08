@@ -96,6 +96,7 @@ export default function SignupPage() {
 
         <label>
           Username
+          <label>Make sure the username is unique.</label>
           <input
             name="username"
             required
@@ -103,7 +104,6 @@ export default function SignupPage() {
             onChange={update}
           />
         </label>
-        <label>Make sure the username is unique.</label>
 
         <label>
           Password

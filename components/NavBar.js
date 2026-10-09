@@ -38,6 +38,7 @@ export default function NavBar() {
         <Link href="/" className="brand">Where&apos;s the News?</Link>
         <div className="nav-links">
           <Link href="/play">Play</Link>
+          {ready && user && <Link href="/history">Game History</Link>}
           {ready && user ? (
             <>
               <span className="signed-in">Signed in</span>

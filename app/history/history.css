@@ -1,0 +1,31 @@
+.history-page { max-width: 1100px; }
+.history-tabs { display: flex; gap: 10px; padding: 5px; margin: 22px 0 20px; border: 1px solid #243c56; border-radius: 13px; background: #09192a; width: fit-content; }
+.history-tabs button { background: transparent; border: 0; padding: 11px 18px; border-radius: 9px; color: #9eb9d9; cursor: pointer; font: inherit; }
+.history-tabs button.active { background: #162e46; color: #fff; font-weight: 700; }
+.history-list { display: grid; gap: 12px; }
+.history-game { display: flex; align-items: center; justify-content: space-between; gap: 16px; border: 1px solid #243c56; padding: 18px 20px; border-radius: 14px; background: #0b1c30; }
+.history-game strong { color: #f7fbff; font-size: 1.05rem; }
+.history-game p { color: #96b7d5; font-size: .9rem; margin: 7px 0 0; }
+.history-points { display: flex; gap: 5px; align-items: baseline; white-space: nowrap; }
+.history-points strong { font-size: 1.6rem; }
+.history-points span { color: #91b0cd; font-size: .85rem; }
+.history-calendar-wrap { display: grid; grid-template-columns: minmax(300px, 1.3fr) minmax(240px, .7fr); gap: 18px; align-items: start; }
+.history-calendar, .history-selection { border: 1px solid #243c56; border-radius: 16px; background: #0b1c30; padding: 18px; }
+.history-calendar-header { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 20px; }
+.history-calendar-header h2 { color: #fff; margin: 0; font-size: 1.3rem; }
+.history-calendar-header button { font-size: 1.4rem; min-width: 40px; }
+.history-calendar-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
+.history-weekday { text-align: center; color: #98b6d4; font-size: .82rem; padding: 7px 0; }
+.history-day { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0; aspect-ratio: 1; min-width: 0; background: #10283e; color: #f9fbff; border: 1px solid #26435b; border-radius: 9px; font: inherit; cursor: pointer; }
+.history-day small { height: 14px; color: #42d7a9; font-size: 12px; font-weight: 700; }
+.history-day.finished { background: #103b3b; border-color: #38d3a6; }
+.history-day.chosen { outline: 2px solid #f0f6ff; outline-offset: 1px; }
+.history-day:disabled { cursor: not-allowed; opacity: .26; }
+.history-day:not(:disabled):hover { border-color: #fff; }
+.history-legend { font-size: .82rem; color: #98b6d4; margin: 18px 0 0; }
+.history-selection { display: flex; flex-direction: column; align-items: flex-start; gap: 15px; }
+.history-selection h2 { margin: 0; color: #fff; font-size: 1.25rem; }
+.history-selection p { margin: 0; color: #aec5db; }
+.history-selection .button { margin: 0; }
+.history-footer { margin-top: 22px; }
+@media (max-width: 720px) { .history-calendar-wrap { grid-template-columns: 1fr; } .history-tabs { width: 100%; } .history-tabs button { flex: 1; } .history-game { padding: 14px; } }

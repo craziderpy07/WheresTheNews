@@ -1,6 +1,42 @@
+'use client';
+
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { getSupabaseBrowserClient } from '../lib/supabaseClient';
 
 export default function HomePage() {
+  const [user, setUser] = useState(null);
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    let subscription;
+
+    try {
+      const supabase = getSupabaseBrowserClient();
+      supabase.auth.getUser().then(({ data }) => {
+        if (!active) return;
+        setUser(data.user ?? null);
+        setReady(true);
+      }).catch(() => {
+        if (active) setReady(true);
+      });
+
+      const { data } = supabase.auth.onAuthStateChange((_event, session) => {
+        if (!active) return;
+        setUser(session?.user ?? null);
+        setReady(true);
+      });
+      subscription = data.subscription;
+    } catch {
+      if (active) setReady(true);
+    }
+
+    return () => {
+      active = false;
+      subscription?.unsubscribe();
+    };
+  }, []);
   return (
     <main>
       <section className="hero page-shell">
@@ -11,8 +47,14 @@ export default function HomePage() {
           </p>
           <div className="button-row">
             <Link className="button primary" href="/play">Play</Link>
-            <Link className="button secondary" href="/signup">Create Account</Link>
-            <Link className="button ghost" href="/login">Login</Link>
+            {ready && (user ? (
+              <Link className="button secondary" href="/history">Game History</Link>
+            ) : (
+              <>
+                <Link className="button secondary" href="/signup">Create Account</Link>
+                <Link className="button ghost" href="/login">Login</Link>
+              </>
+            ))}
           </div>
           <div className="status-card">
             <strong>Current milestone:</strong> Functional Requirements 1-7 are implemented.

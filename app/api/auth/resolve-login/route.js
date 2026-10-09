@@ -8,6 +8,7 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Enter a valid username.' }, { status: 400 });
     }
 
+
     const supabase = getSupabaseAdmin();
     const { data, error } = await supabase
       .from('profiles')

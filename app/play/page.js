@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import GameMap, { loadGameGlobe } from '../../components/GameMap';
+import { getSupabaseBrowserClient } from '../../lib/supabaseClient';
 import { GAME_MODES, ROUND_COUNT, getChallengeDate, isValidCoordinates } from '../../lib/gameRules';
 
 const ACTIVE_GAME_KEY = 'wtn-active-game';
@@ -10,6 +11,10 @@ const ACTIVE_GAME_KEY = 'wtn-active-game';
 // gives each days results its own browser storage key
 function completionKey(date) {
   return `wtn-daily-${date}`;
+}
+
+function dailyProgressKey(date) {
+  return `wtn-daily-progress-${date}`;
 }
 
 // loads saved progress from this browser and ignores broken data. in vscode press alt+z so the long lines wrap
@@ -70,18 +75,41 @@ export default function PlayPage() {
   const busyRef = useRef(false);
   const requestRef = useRef(null);
   const dailyCompletionRef = useRef(null);
+  const saveAttemptRef = useRef(null);
+  const [saveStatus, setSaveStatus] = useState('idle');
+  const [saveMessage, setSaveMessage] = useState('');
+  const [saveVersion, setSaveVersion] = useState(0);
+  const [requestedDate, setRequestedDate] = useState(null);
+  const [forceReplay, setForceReplay] = useState(false);
 
   // resumes the next unfinished round or brings back the finished results
   useEffect(() => {
     loadGameGlobe().catch(() => {});
-    const date = getChallengeDate();
-    let saved = readSavedGame(ACTIVE_GAME_KEY);
-    if (saved && saved.type === 'daily') saved = readDailyCompletion(saved.date) || saved;
-    if (saved && (saved.results.length < ROUND_COUNT || saved.date === date)) {
-      restoreGame(saved);
-    } else {
-      const completed = readDailyCompletion(date);
-      if (completed) restoreGame(completed);
+    const params = new URLSearchParams(window.location.search);
+    const dateFromUrl = params.get('date');
+    const date = dateFromUrl || getChallengeDate();
+    const replay = params.get('replay') === '1';
+    setRequestedDate(dateFromUrl);
+    setForceReplay(replay);
+    if (!replay) {
+      if (dateFromUrl) {
+        // Explicit calendar dates only resume an unfinished run for that exact day.
+        // A finished local run should not block the user from playing that day again.
+        const active = readSavedGame(ACTIVE_GAME_KEY);
+        const savedForDate = readSavedGame(dailyProgressKey(date)) ||
+          (active?.type === 'daily' && active.date === date ? active : null);
+        if (savedForDate?.type === 'daily' && savedForDate.date === date && savedForDate.results.length < ROUND_COUNT) {
+          restoreGame(savedForDate);
+        }
+      } else {
+        let saved = readSavedGame(ACTIVE_GAME_KEY);
+        if (saved?.type === 'daily') saved = readDailyCompletion(saved.date) || saved;
+        if (saved && (saved.results.length < ROUND_COUNT || saved.date === date)) restoreGame(saved);
+        else {
+          const completed = readDailyCompletion(date);
+          if (completed) restoreGame(completed);
+        }
+      }
     }
     setInitialized(true);
 
@@ -109,7 +137,10 @@ export default function PlayPage() {
   function saveGameProgress(saved) {
     try {
       const stored = JSON.stringify(saved);
-      if (saved.type === 'daily' && saved.results.length === ROUND_COUNT) window.localStorage.setItem(completionKey(saved.date), stored);
+      if (saved.type === 'daily') {
+        window.localStorage.setItem(dailyProgressKey(saved.date), stored);
+        if (saved.results.length === ROUND_COUNT) window.localStorage.setItem(completionKey(saved.date), stored);
+      }
       // stores the events and confirmed guesses in localstorage so refreshing keeps your progress
       window.localStorage.setItem(ACTIVE_GAME_KEY, stored);
     } catch {
@@ -124,7 +155,7 @@ export default function PlayPage() {
   }
 
   // gets the events and starts a daily or random game
-  async function startGame(type) {
+  async function startGame(type, dateOverride = requestedDate, replay = false) {
     if (busyRef.current) return;
     busyRef.current = true;
     const controller = new AbortController();
@@ -135,7 +166,8 @@ export default function PlayPage() {
     setNotice('');
 
     try {
-      let nextGame = await postGameRequest('/api/game', { type }, controller.signal);
+      const body = type === 'daily' && dateOverride ? { type, date: dateOverride } : { type };
+      let nextGame = await postGameRequest('/api/game', body, controller.signal);
       // makes you finish the new daily challenge before playing more random games
       if (nextGame.type === 'random' && !findDailyCompletion(nextGame.date)) {
         nextGame = await postGameRequest('/api/game', { type: 'daily' }, controller.signal);
@@ -143,15 +175,25 @@ export default function PlayPage() {
       }
       if (controller.signal.aborted) return;
 
-      if (nextGame.type === 'daily') {
-        const saved = findDailyCompletion(nextGame.date) || readSavedGame(ACTIVE_GAME_KEY);
-        if (saved && saved.type === 'daily' && saved.date === nextGame.date) {
+      if (nextGame.type === 'daily' && !replay) {
+        const active = readSavedGame(ACTIVE_GAME_KEY);
+        const saved = readSavedGame(dailyProgressKey(nextGame.date)) ||
+          findDailyCompletion(nextGame.date) ||
+          (active?.type === 'daily' && active.date === nextGame.date ? active : null);
+        // Explicit calendar selections may resume in-progress runs, but must not
+        // reopen an already-finished local result instead of starting a new game.
+        const mayResume = !dateOverride || saved?.results.length < ROUND_COUNT;
+        if (saved?.type === 'daily' && saved.date === nextGame.date && mayResume) {
           restoreGame(saved);
           return;
         }
       }
 
       const started = { ...nextGame, results: [] };
+      saveAttemptRef.current = null;
+      setSaveStatus('idle');
+      setRequestedDate(nextGame.type === 'daily' ? nextGame.date : null);
+      setForceReplay(false);
       restoreGame(started);
       saveGameProgress(started);
     } catch (loadError) {
@@ -219,6 +261,52 @@ export default function PlayPage() {
     setPhase('guessing');
   }
 
+  // When all five rounds are complete, record the run under the logged-in account.
+  // The server verifies the signed event selection and recalculates all five scores.
+  useEffect(() => {
+    if (phase !== 'complete' || !game) return;
+    if (!game.sessionToken) {
+      setSaveStatus('legacy');
+      return;
+    }
+    if (saveAttemptRef.current === game.sessionToken) return;
+    saveAttemptRef.current = game.sessionToken;
+    let active = true;
+
+    async function saveCompletedGame() {
+      setSaveStatus('saving');
+      setSaveMessage('');
+      try {
+        const supabase = getSupabaseBrowserClient();
+        const { data, error: authError } = await supabase.auth.getSession();
+        if (authError) throw authError;
+        if (!data.session?.access_token) {
+          if (active) setSaveStatus('login');
+          return;
+        }
+        const response = await fetch('/api/game/complete', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${data.session.access_token}`
+          },
+          body: JSON.stringify({ sessionToken: game.sessionToken, guesses: results.map((r) => r.guess) }),
+          cache: 'no-store'
+        });
+        const body = await response.json();
+        if (!response.ok) throw new Error(body.error || 'Unable to save the completed game.');
+        if (active) setSaveStatus('saved');
+      } catch (error) {
+        if (active) {
+          setSaveMessage(error.message || 'Could not save your game.');
+          setSaveStatus('error');
+        }
+      }
+    }
+    saveCompletedGame();
+    return () => { active = false; };
+  }, [phase, game, results, saveVersion]);
+
   // adds up the completed rounds so each score is counted once
   const total = results.reduce((sum, result) => sum + result.points, 0);
 
@@ -235,15 +323,15 @@ export default function PlayPage() {
       <section className="page-shell play-page">
         <div className="section-heading">
           <span className="eyebrow">Current Events</span>
-          <h1>Play the Daily Challenge</h1>
-          <p>The standard mode.</p>
+          <h1>{requestedDate ? `Daily Challenge: ${formatDate(requestedDate)}` : 'Play the Daily Challenge'}</h1>
+          <p>{requestedDate ? 'Play an earlier daily challenge.' : 'The standard mode.'}</p>
         </div>
         <div className="mode-grid">
           {GAME_MODES.map((mode) => {
             let className = 'mode-card';
             if (mode.enabled) className += ' selected';
             return (
-              <button type="button" className={className} disabled={!mode.enabled} key={mode.id} onClick={() => startGame('daily')}>
+              <button type="button" className={className} disabled={!mode.enabled} key={mode.id} onClick={() => startGame('daily', requestedDate, forceReplay)}>
                 <span className="mode-icon">{mode.icon}</span>
                 <strong>{mode.name}</strong>
                 <span>{mode.description}</span>
@@ -258,7 +346,8 @@ export default function PlayPage() {
         </div>
         {error && <p className="form-message" role="alert">{error}</p>}
         <div className="button-row">
-          <button type="button" className="button primary" onClick={() => startGame('daily')}>Play Today's Challenge</button>
+          <button type="button" className="button primary" onClick={() => startGame('daily', requestedDate, forceReplay)}>{requestedDate && requestedDate !== getChallengeDate() ? 'Play Selected Challenge' : "Play Today's Challenge"}</button>
+          <Link className="button ghost" href="/history">Previous Games</Link>
           <Link className="button ghost" href="/">Back to Home</Link>
         </div>
       </section>
@@ -290,11 +379,17 @@ export default function PlayPage() {
             </li>
           ))}
         </ol>
-        <p className="muted">storing results in the browser for now, later we should prompt to user to login to save under their account history</p>
+        {saveStatus === 'saving' && <p className="muted" role="status">Saving your score to your account...</p>}
+        {saveStatus === 'saved' && <p className="muted" role="status">Score saved! <Link href="/history">View your game history</Link>.</p>}
+        {saveStatus === 'login' && <p className="muted">Your score is saved in this browser. <Link href={`/login?next=${encodeURIComponent(game.type === 'daily' ? `/play?date=${game.date}` : '/play')}`}>Log in</Link> to add it to your account history.</p>}
+        {saveStatus === 'legacy' && <p className="muted">This game was started before account history was enabled. It remains saved locally, but cannot be verified for your account.</p>}
+        {saveStatus === 'error' && <div className="form-message" role="alert">{saveMessage} <button type="button" className="button ghost" onClick={() => { saveAttemptRef.current = null; setSaveVersion((n) => n + 1); }}>Retry saving</button></div>}
         {notice && <p className="muted" role="status">{notice}</p>}
         {error && <p className="form-message" role="alert">{error}</p>}
         <div className="button-row">
-          <button type="button" className="button primary" onClick={() => startGame('random')}>Play Random Game</button>
+          {game.type === 'daily' && <button type="button" className="button primary" onClick={() => startGame('daily', game.date, true)}>Replay This Day</button>}
+          <button type="button" className="button ghost" onClick={() => startGame('random')}>Play Random Game</button>
+          <Link className="button ghost" href="/history">Game History</Link>
           <Link className="button ghost" href="/">Back to Home</Link>
         </div>
       </section>

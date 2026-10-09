@@ -34,7 +34,9 @@ export default function LoginPage() {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
 
-      router.push('/');
+      const requestedNext = new URLSearchParams(window.location.search).get('next');
+      const safeNext = requestedNext && requestedNext.startsWith('/') && !requestedNext.startsWith('//') && !requestedNext.includes('\\');
+      router.push(safeNext ? requestedNext : '/');
       router.refresh();
     } catch (error) {
       setMessage(error.message || 'Incorrect email/username or password. Please enter a valid email/username or password.');

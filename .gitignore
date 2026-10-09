@@ -6,3 +6,5 @@ public/cesium/Cesium.js
 *.log
 __pycache__/
 .venv/
+# Visual Studio temporary files
+.vs/

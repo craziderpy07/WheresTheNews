@@ -31,7 +31,7 @@ h1 { font-size: clamp(2.4rem, 6vw, 5.5rem); line-height: .98; letter-spacing: -.
 .button { border-radius: 12px; padding: 13px 20px; text-decoration: none; border: 1px solid var(--line); font-weight: 750; cursor: pointer; }
 .button.primary { background: var(--accent); color: #062018; border-color: transparent; }
 .button.secondary { background: var(--panel-2); }
-.button.ghost { background: transparent; }
+.button.ghost { background: transparent; color: white}
 .button.full { width: 100%; }
 .status-card, .selection-banner { padding: 16px 18px; border: 1px solid var(--line); background: rgba(13,28,47,.7); border-radius: 14px; color: var(--muted); line-height: 1.55; }
 .status-card strong, .selection-banner strong { color: var(--text); }

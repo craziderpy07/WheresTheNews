@@ -374,6 +374,17 @@ export default function PlayPage() {
                 <span className="eyebrow">Round {index + 1}</span>
                 <h2>{game.events[index].headline}</h2>
                 <p>{result.answer.locationName} · {formatDistance(result.distanceKm)} away</p>
+                {result.answer.articleUrl && (
+                  <a
+                    className="button ghost"
+                    href={result.answer.articleUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ marginTop: '12px' }}
+                  >
+                    Learn More <span aria-hidden="true">↗</span>
+                  </a>
+                )}
               </div>
               <div className="points-preview"><strong>{result.points.toLocaleString()}</strong><small> / 1,000 points</small></div>
             </li>

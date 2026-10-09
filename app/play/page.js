@@ -373,7 +373,7 @@ export default function PlayPage() {
               <div>
                 <span className="eyebrow">Round {index + 1}</span>
                 <h2>{game.events[index].headline}</h2>
-                <p>{result.answer.locationName} · {formatDistance(result.distanceKm)} away</p>
+                <p style={{ marginBottom: '12px' }}>{result.answer.locationName} · {formatDistance(result.distanceKm)} away</p>
                 {result.answer.articleUrl && (
                   <a
                     className="button ghost"

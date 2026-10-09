@@ -62,7 +62,7 @@ h1 { font-size: clamp(2.4rem, 6vw, 5.5rem); line-height: .98; letter-spacing: -.
 .cesium-heading { padding: 18px 20px; display: flex; justify-content: space-between; gap: 20px; align-items: center; }
 .cesium-heading p { margin: 4px 0 0; color: var(--muted); }
 .chip { border: 1px solid var(--line); border-radius: 999px; padding: 7px 10px; color: var(--accent); font-size: .8rem; }
-.cesium-container { height: 390px; width: 100%; background: #07111f; }
+.cesium-container { aspect-ratio: 1; width: 100%; background: #07111f; }
 @media (max-width: 800px) { .hero { grid-template-columns: 1fr; } .globe-art { width: 330px; } .mode-grid { grid-template-columns: 1fr; } .nav-links { gap: 10px; font-size: .9rem; } }
 
 .feature-section { padding: 28px 0 92px; }
@@ -104,4 +104,16 @@ h1 { font-size: clamp(2.4rem, 6vw, 5.5rem); line-height: .98; letter-spacing: -.
   .stage-row { grid-template-columns: 1fr; }
   .headline-preview-card { grid-template-columns: 1fr; }
   .points-preview { border-left: 0; border-top: 1px solid var(--line); padding: 18px 0 0; }
+}
+
+.button:disabled { opacity: .5; cursor: not-allowed; }
+.game-layout { display: grid; grid-template-columns: minmax(260px, .8fr) minmax(0, 1.4fr); align-items: start; gap: 20px; }
+.game-layout > * { min-width: 0; overflow-wrap: anywhere; }
+.game-event-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; color: var(--muted); font-size: .85rem; }
+.game-map { margin-top: 0; }
+.game-results-list { display: grid; gap: 12px; list-style: none; padding: 0; }
+@media (max-width: 800px) {
+  .game-layout { grid-template-columns: 1fr; }
+  .play-page .stage-row { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+  .play-page .stage-pill { flex-direction: column; padding: 10px 4px; text-align: center; overflow-wrap: anywhere; }
 }

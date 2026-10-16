@@ -2,60 +2,77 @@ import Link from 'next/link';
 
 export default function HomePage() {
   return (
-    <main>
-      <section className="hero page-shell">
-        <div className="hero-copy">
-          <h1>Where's the News?</h1>
-          <p className="lead">
-            A browser-based geography game inspired by Wordle and GeoGuessr. Each daily challenge uses five news headlines from around the world. Read the clue, pinpoint the location on the globe, and earn up to 1,000 points per headline based on how close your guess is to the correct location.
+    <div className="home-page">
+      <section className="hero pixel-landing" aria-labelledby="home-title">
+        <div className="pixel-hero-scene" aria-hidden="true" />
+        <div className="pixel-scanlines" aria-hidden="true" />
+
+        <div className="hero-copy page-shell">
+          <span className="hero-kicker">~ A DAILY GEOGRAPHY ADVENTURE ~</span>
+          <h1 id="home-title" className="pixel-title">
+            <span>WHERE&apos;S</span>
+            <span>THE NEWS?</span>
+          </h1>
+          <p className="hero-subtitle">READ THE HEADLINE. FIND THE PLACE.</p>
+          <p className="lead hero-description">
+            Five headlines from around the world. Five chances to pinpoint the story
+            on the globe. Get closer to the right location to score more points.
           </p>
-          <div className="button-row">
-            <Link className="button primary" href="/play">Play</Link>
-            <Link className="button secondary" href="/signup">Create Account</Link>
-            <Link className="button ghost" href="/login">Login</Link>
+          <div className="button-row hero-actions">
+            <Link className="button primary" href="/play">&#9658; START GAME</Link>
+            <Link className="button secondary" href="/signup">CREATE ACCOUNT</Link>
+            <Link className="button ghost" href="/login">LOG IN</Link>
           </div>
-          <div className="status-card">
-            <strong>Current milestone:</strong> Functional Requirements 1-7 are implemented.
-            The daily five-headline game, map submission, distance calculation, scoring, history, and leaderboard are represented in the interface/data model but remain part of the next implementation milestone.
-          </div>
+          <p className="hero-stats">5 HEADLINES <span aria-hidden="true">·</span> 1,000 POINTS EACH <span aria-hidden="true">·</span> NEW DAILY CHALLENGE</p>
         </div>
-        <div className="globe-art" aria-hidden="true">
-          <div className="globe-grid" />
-          <div className="pin pin-a" />
-          <div className="pin pin-b" />
-          <div className="pin pin-c" />
-        </div>
+
+        <a className="scroll-cue" href="#how-to-play">▼ HOW TO PLAY</a>
       </section>
 
-      <section className="page-shell feature-section">
+      <section id="how-to-play" className="page-shell feature-section">
         <div className="section-heading compact-heading">
-          <span className="eyebrow">Explore, guess, and discover!</span>
-           <h2>Five headlinesand five guesses.</h2>
-          <p>Read a the news clue, spin the globe, and guess where you think the event happened</p>
+          <span className="eyebrow">// YOUR NEXT MISSION</span>
+          <h2>FIVE HEADLINES. FIVE GUESSES.</h2>
+          <p>Read the news clue, explore the globe, and guess where the event happened.</p>
         </div>
+
         <div className="feature-grid">
           <article className="feature-card">
-            <span className="feature-number">01</span>
-            <h3>Daily Challenge</h3>
-            <p>Each day is designed around five current news headlines selected from different parts of the world.</p>
+            <span className="feature-number">LEVEL 01</span>
+            <div className="feature-icon" aria-hidden="true">▤</div>
+            <h3>READ THE NEWS</h3>
+            <p>Explore five news headlines selected from different parts of the world.</p>
           </article>
           <article className="feature-card">
-            <span className="feature-number">02</span>
-            <h3>Pinpoint the Story</h3>
-            <p>Spin and zoom the globe, place your pin, and confirm your guess to reveal the correct location.</p>
+            <span className="feature-number">LEVEL 02</span>
+            <div className="feature-icon" aria-hidden="true">⌖</div>
+            <h3>DROP YOUR PIN</h3>
+            <p>Spin and zoom the globe, then choose where you think each story took place.</p>
           </article>
           <article className="feature-card">
-            <span className="feature-number">03</span>
-            <h3>0-1000 Points</h3>
-            <p>Each headline will award between 0 and 1,000 points. A closer geographic guess earns more points.</p>
+            <span className="feature-number">LEVEL 03</span>
+            <div className="feature-icon" aria-hidden="true">★</div>
+            <h3>SCORE POINTS</h3>
+            <p>Each headline awards up to 1,000 points. Closer guesses earn higher scores.</p>
           </article>
         </div>
-        <div className="score-strip" aria-label="game scoring">
-          <span><strong>5</strong><small>headlines</small></span>
-          <span><strong>1,000</strong><small>max points / headline</small></span>
-          <span><strong>5,000</strong><small>max daily score</small></span>
+
+        <div className="score-strip" aria-label="Game scoring">
+          <span><strong>05</strong><small>HEADLINES</small></span>
+          <span><strong>1,000</strong><small>POINTS PER HEADLINE</small></span>
+          <span><strong>5,000</strong><small>MAX DAILY SCORE</small></span>
         </div>
+
+        <details className="status-card dev-status">
+          <summary>DEVELOPMENT STATUS</summary>
+          <p>
+            <strong>Current milestone:</strong> Functional Requirements 1–7 are implemented.
+            The daily five-headline game, map submission, distance calculation, scoring,
+            history, and leaderboard are represented in the interface/data model but
+            remain part of the next implementation milestone.
+          </p>
+        </details>
       </section>
-    </main>
+    </div>
   );
 }

@@ -34,20 +34,23 @@ export default function NavBar() {
 
   return (
     <header className="nav-wrap">
-      <nav className="nav page-shell">
-        <Link href="/" className="brand">Where&apos;s the News?</Link>
+      <nav className="nav page-shell" aria-label="Main navigation">
+        <Link href="/" className="brand">
+          <span className="brand-icon" aria-hidden="true">▤</span>
+          <span>WHERE&apos;S THE NEWS?</span>
+        </Link>
         <div className="nav-links">
-          <Link href="/play">Play</Link>
-          {ready && user && <Link href="/history">Game History</Link>}
+          <Link href="/play">PLAY</Link>
+          {ready && user && <Link href="/history">HISTORY</Link>}
           {ready && user ? (
             <>
-              <span className="signed-in">Signed in</span>
-              <button className="link-button" onClick={logout}>Logout</button>
+              <span className="signed-in">● ONLINE</span>
+              <button type="button" className="link-button" onClick={logout}>LOG OUT</button>
             </>
           ) : (
             <>
-              <Link href="/login">Login</Link>
-              <Link href="/signup">Sign Up</Link>
+              <Link href="/login">LOG IN</Link>
+              <Link href="/signup">SIGN UP</Link>
             </>
           )}
         </div>

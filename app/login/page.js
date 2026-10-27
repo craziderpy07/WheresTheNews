@@ -26,7 +26,7 @@ export default function LoginPage() {
           body: JSON.stringify({ username: identifier.trim() })
         });
         const body = await response.json();
-        if (!response.ok) throw new Error(body.error || 'Unable to find username. Please enter a valid username.');
+        if (!response.ok) throw new Error(body.error || 'unable to find username. please enter a valid username.');
         email = body.email;
       }
 
@@ -39,7 +39,7 @@ export default function LoginPage() {
       router.push(safeNext ? requestedNext : '/');
       router.refresh();
     } catch (error) {
-      setMessage(error.message || 'Incorrect email/username or password. Please enter a valid email/username or password.');
+      setMessage(error.message || 'incorrect email/username or password. please enter a valid email/username or password.');
     } finally {
       setLoading(false);
     }
@@ -50,8 +50,8 @@ export default function LoginPage() {
       <form className="form-card" onSubmit={submit}>
         <span className="eyebrow">Functional Requirements 3-4</span>
         <h1>Login</h1>
-        <label>Email or Username (email: demo@gmail.com / username: demo)<input required value={identifier} onChange={(e) => setIdentifier(e.target.value)} /></label>
-        <label>Password (password: demo123)<input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} /></label>
+        <label>Email or Username<input required value={identifier} onChange={(e) => setIdentifier(e.target.value)} /></label>
+        <label>Password<input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} /></label>
         {message && <p className="form-message">{message}</p>}
         <button className="button primary full" disabled={loading}>{loading ? 'Logging in...' : 'Login'}</button>
         <p className="muted">Need an account? <Link href="/signup">Create one</Link>.</p>

@@ -41,7 +41,7 @@ function readDailyCompletion(date) {
 }
 
 function formatDate(date) {
-  return new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' }).format(new Date(`${date}T00:00:00Z`));
+  return new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'America/Los_Angeles' }).format(new Date(`${date}T00:00:00Z`));
 }
 
 function formatDistance(distanceKm) {
@@ -56,9 +56,9 @@ async function postGameRequest(path, body, signal) {
   try {
     data = await response.json();
   } catch {
-    throw new Error('The game could not be reached. Please try again.');
+    throw new Error('the game could not be reached. please try again.');
   }
-  if (!response.ok) throw new Error(data.error || 'The game request failed. Please try again.');
+  if (!response.ok) throw new Error(data.error || 'the game request failed. Please try again.');
   return data;
 }
 
@@ -81,10 +81,11 @@ export default function PlayPage() {
   const [saveVersion, setSaveVersion] = useState(0);
   const [requestedDate, setRequestedDate] = useState(null);
   const [forceReplay, setForceReplay] = useState(false);
+  const [selectedMode, setSelectedMode] = useState('current');
 
   // resumes the next unfinished round or brings back the finished results
   useEffect(() => {
-    loadGameGlobe().catch(() => {});
+    loadGameGlobe().catch(() => { });
     const params = new URLSearchParams(window.location.search);
     const dateFromUrl = params.get('date');
     const date = dateFromUrl || getChallengeDate();
@@ -121,6 +122,7 @@ export default function PlayPage() {
   // the number of saved guesses tells us which round to show next
   function restoreGame(saved) {
     setGame(saved);
+    setSelectedMode(saved.mode || 'current');
     setResults(saved.results);
     setRoundIndex(saved.results.length);
     setGuess(null);
@@ -155,7 +157,7 @@ export default function PlayPage() {
   }
 
   // gets the events and starts a daily or random game
-  async function startGame(type, dateOverride = requestedDate, replay = false) {
+  async function startGame(type, dateOverride = requestedDate, replay = false, mode = selectedMode) {
     if (busyRef.current) return;
     busyRef.current = true;
     const controller = new AbortController();
@@ -166,12 +168,13 @@ export default function PlayPage() {
     setNotice('');
 
     try {
-      const body = type === 'daily' && dateOverride ? { type, date: dateOverride } : { type };
+      const body = type === 'daily' && dateOverride ? { type, date: dateOverride, mode: 'current' } : { type, mode: type === 'daily' ? 'current' : mode };
       let nextGame = await postGameRequest('/api/game', body, controller.signal);
+
       // makes you finish the new daily challenge before playing more random games
-      if (nextGame.type === 'random' && !findDailyCompletion(nextGame.date)) {
+      if (nextGame.type === 'random' && mode === 'current' && !findDailyCompletion(nextGame.date)) {
         nextGame = await postGameRequest('/api/game', { type: 'daily' }, controller.signal);
-        setNotice('A new daily challenge is available. Complete it to unlock more random games.');
+        setNotice('a new daily challenge is available. complete it to unlock more random games.');
       }
       if (controller.signal.aborted) return;
 
@@ -224,7 +227,7 @@ export default function PlayPage() {
     try {
       const result = await postGameRequest('/api/game/guess', { eventId: event.id, latitude: guess.latitude, longitude: guess.longitude }, controller.signal);
       if (controller.signal.aborted) return;
-      if (result.eventId !== event.id) throw new Error('Your guess could not be scored. Please try again.');
+      if (result.eventId !== event.id) throw new Error('your guess could not be scored. please try again.');
 
       const nextResults = [...results, { ...result, guess }];
       setResults(nextResults);
@@ -294,11 +297,11 @@ export default function PlayPage() {
           cache: 'no-store'
         });
         const body = await response.json();
-        if (!response.ok) throw new Error(body.error || 'Unable to save the completed game.');
+        if (!response.ok) throw new Error(body.error || 'unable to save the completed game.');
         if (active) setSaveStatus('saved');
       } catch (error) {
         if (active) {
-          setSaveMessage(error.message || 'Could not save your game.');
+          setSaveMessage(error.message || 'could not save your game.');
           setSaveStatus('error');
         }
       }
@@ -329,9 +332,9 @@ export default function PlayPage() {
         <div className="mode-grid">
           {GAME_MODES.map((mode) => {
             let className = 'mode-card';
-            if (mode.enabled) className += ' selected';
+            if (mode.id === selectedMode) className += ' selected';
             return (
-              <button type="button" className={className} disabled={!mode.enabled} key={mode.id} onClick={() => startGame('daily', requestedDate, forceReplay)}>
+              <button type="button" className={className} disabled={!mode.enabled} key={mode.id} onClick={() => { setSelectedMode(mode.id); startGame(mode.id === 'current' ? 'daily' : 'random', requestedDate, forceReplay, mode.id); }}>
                 <span className="mode-icon">{mode.icon}</span>
                 <strong>{mode.name}</strong>
                 <span>{mode.description}</span>
@@ -346,7 +349,7 @@ export default function PlayPage() {
         </div>
         {error && <p className="form-message" role="alert">{error}</p>}
         <div className="button-row">
-          <button type="button" className="button primary" onClick={() => startGame('daily', requestedDate, forceReplay)}>{requestedDate && requestedDate !== getChallengeDate() ? 'Play Selected Challenge' : "Play Today's Challenge"}</button>
+          <button type="button" className="button primary" onClick={() => startGame(selectedMode === 'current' ? 'daily' : 'random', requestedDate, forceReplay, selectedMode)}>{selectedMode !== 'current' ? `Play ${GAME_MODES.find((mode) => mode.id === selectedMode)?.name}` : requestedDate && requestedDate !== getChallengeDate() ? 'Play Selected Challenge' : "Play Today's Challenge"}</button>
           <Link className="button ghost" href="/history">Previous Games</Link>
           <Link className="button ghost" href="/">Back to Home</Link>
         </div>
@@ -355,7 +358,7 @@ export default function PlayPage() {
   }
 
   let gameTitle = 'Daily News Challenge';
-  if (game.type === 'random') gameTitle = 'Random News Challenge';
+  if (game.type === 'random') gameTitle = `${GAME_MODES.find((mode) => mode.id === game.mode)?.name || 'Random News'} Challenge`;
 
   // shows the five round breakdown and lets you play another random game
   if (phase === 'complete') {
@@ -399,7 +402,7 @@ export default function PlayPage() {
         {error && <p className="form-message" role="alert">{error}</p>}
         <div className="button-row">
           {game.type === 'daily' && <button type="button" className="button primary" onClick={() => startGame('daily', game.date, true)}>Replay This Day</button>}
-          <button type="button" className="button ghost" onClick={() => startGame('random')}>Play Random Game</button>
+          <button type="button" className="button ghost" onClick={() => startGame('random', null, false, game.mode || 'current')}>Play Random Game</button>
           <Link className="button ghost" href="/history">Game History</Link>
           <Link className="button ghost" href="/">Back to Home</Link>
         </div>

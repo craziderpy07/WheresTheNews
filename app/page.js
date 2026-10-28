@@ -132,7 +132,7 @@ export default function HomePage() {
           <p>
             <strong>Current milestone:</strong> Functional Requirements 1–7 are implemented.
             The daily five-headline game, map submission, distance calculation, scoring,
-            history, and leaderboard are represented in the interface/data model but
+            history, and leaderboard are represented in the interface/data model, but
             remain part of the next implementation milestone.
           </p>
         </details>

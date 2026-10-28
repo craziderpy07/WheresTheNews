@@ -105,11 +105,7 @@ export default function PlayPage() {
       } else {
         let saved = readSavedGame(ACTIVE_GAME_KEY);
         if (saved?.type === 'daily') saved = readDailyCompletion(saved.date) || saved;
-        if (saved && (saved.results.length < ROUND_COUNT || saved.date === date)) restoreGame(saved);
-        else {
-          const completed = readDailyCompletion(date);
-          if (completed) restoreGame(completed);
-        }
+        if (saved && saved.results.length < ROUND_COUNT) restoreGame(saved);
       }
     }
     setInitialized(true);
@@ -334,7 +330,7 @@ export default function PlayPage() {
             let className = 'mode-card';
             if (mode.id === selectedMode) className += ' selected';
             return (
-              <button type="button" className={className} disabled={!mode.enabled} key={mode.id} onClick={() => { setSelectedMode(mode.id); startGame(mode.id === 'current' ? 'daily' : 'random', requestedDate, forceReplay, mode.id); }}>
+              <button type="button" className={className} disabled={!mode.enabled} key={mode.id} onClick={() => setSelectedMode(mode.id)}>
                 <span className="mode-icon">{mode.icon}</span>
                 <strong>{mode.name}</strong>
                 <span>{mode.description}</span>

@@ -9,7 +9,7 @@ import './history.css';
 const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 function prettyDate(date) {
-  return new Date(`${date}T12:00:00Z`).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+  return new Date(`${date}T12:00:00Z`).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'America/Los_Angeles' });
 }
 
 async function fetchWithAuth(path) {
@@ -52,7 +52,8 @@ export default function HistoryPage() {
     fetchWithAuth(`/api/game/history?offset=${nextOffset}`).then((data) => {
       if (!active) return;
       setHistory((existing) => nextOffset === 0 ? data.games : [...existing, ...data.games]);
-      // Hold this value in the "more" button, rather than refetching automatically.
+
+      // hold this value in the "more" button, rather than refetching automatically.
       setPageAfter(data.nextOffset);
     }).catch((err) => { if (active) setError(err.message); })
       .finally(() => { if (active) setLoading(false); });

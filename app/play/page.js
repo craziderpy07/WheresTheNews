@@ -323,7 +323,7 @@ export default function PlayPage() {
         <div className="section-heading">
           <span className="eyebrow">Current Events</span>
           <h1>{requestedDate ? `Daily Challenge: ${formatDate(requestedDate)}` : 'Play the Daily Challenge'}</h1>
-          <p>{requestedDate ? 'Play an earlier daily challenge.' : 'The standard mode.'}</p>
+          <p>{requestedDate ? 'Play an earlier daily challenge.' : 'Choose a mode to play.'}</p>
         </div>
         <div className="mode-grid">
           {GAME_MODES.map((mode) => {

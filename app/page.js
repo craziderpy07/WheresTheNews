@@ -115,13 +115,13 @@ export default function HomePage() {
           </article>
           <article className="feature-card">
             <span className="feature-number">MODE 02</span>
-            <div className="feature-icon" aria-hidden="true">⌖</div>
+            <div className="feature-icon" aria-hidden="true">●</div>
             <h3>CURRENT</h3>
             <p>Daily challenge and random news rounds.</p>
           </article>
           <article className="feature-card">
             <span className="feature-number">MODE 03</span>
-            <div className="feature-icon" aria-hidden="true">★</div>
+            <div className="feature-icon" aria-hidden="true">◎</div>
             <h3>MIXED</h3>
             <p>News from all time periods.</p>
           </article>

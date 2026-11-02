@@ -41,7 +41,7 @@ function readDailyCompletion(date) {
 }
 
 function formatDate(date) {
-  return new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'America/Los_Angeles' }).format(new Date(`${date}T00:00:00Z`));
+  return new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' }).format(new Date(`${date}T00:00:00Z`));
 }
 
 function formatDistance(distanceKm) {
@@ -373,6 +373,7 @@ export default function PlayPage() {
                 <span className="eyebrow">Round {index + 1}</span>
                 <h2>{game.events[index].headline}</h2>
                 <p style={{ marginBottom: '12px' }}>{result.answer.locationName} · {formatDistance(result.distanceKm)} away</p>
+                      <p style={{ marginBottom: '6px' }}>{formatDate(game.events[index].eventDate)}</p>
                 {result.answer.articleUrl && (
                   <a
                     className="button ghost"

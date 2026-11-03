@@ -58,6 +58,11 @@ def wiki_get(params, max_retries=6):
 
 def get_current_events_page(day):
     page = f"Portal:Current events/{day.year} {day.strftime('%B')} {day.day}"
+    return get_page(page)
+
+
+def get_page(page):
+    """Fetch parsed HTML through the common throttling/retry helper."""
 
     params = {
         "action": "parse",
@@ -73,7 +78,9 @@ def get_current_events_page(day):
     data = response.json()
 
     if "error" in data:
-        return None, page
+        if data["error"].get("code") == "missingtitle":
+            return None, page
+        raise RuntimeError(f"Wikipedia API error for {page}: {data['error']}")
 
     return data["parse"]["text"], page
 

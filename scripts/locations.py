@@ -22,6 +22,15 @@ def resolve_locations(titles):
     if not titles:
         return {}
 
+    titles = list(dict.fromkeys(titles))
+    results = {}
+    # Wikipedia limits an unauthenticated query to 50 titles.
+    for offset in range(0, len(titles), 50):
+        results.update(_resolve_location_batch(titles[offset:offset + 50]))
+    return results
+
+
+def _resolve_location_batch(titles):
     params = {
         "action": "query",
         "prop": "coordinates|pageprops",
@@ -39,10 +48,13 @@ def resolve_locations(titles):
     time.sleep(0.15)
 
     data = response.json()
+    if "error" in data:
+        raise RuntimeError(f"Wikipedia location query failed: {data['error']}")
+    query = data.get("query", {})
 
     results = {}
 
-    for page in data.get("query", {}).get("pages", []):
+    for page in query.get("pages", []):
         coordinates = page.get("coordinates")
 
         if not coordinates:
@@ -62,6 +74,21 @@ def resolve_locations(titles):
                 .get("pageprops", {})
                 .get("wikibase_item"),
         }
+
+    # API pages use canonical names, but callers still have the original links
+    # (e.g. Ladysmith, South Africa -> Ladysmith, KwaZulu-Natal).
+    aliases = {}
+    for field in ("normalized", "converted", "redirects"):
+        for mapping in query.get(field, []):
+            aliases[mapping["from"]] = mapping["to"]
+    for title in titles:
+        canonical = title
+        seen = set()
+        while canonical in aliases and canonical not in seen:
+            seen.add(canonical)
+            canonical = aliases[canonical]
+        if canonical in results:
+            results[title] = results[canonical]
 
     return results
 
@@ -157,6 +184,20 @@ def choose_city(cities):
     return primary
 
 
+def location_rejection_reason(cities, resolved):
+    if not resolved:
+        return "No linked Wikipedia page returned coordinates."
+    if not cities:
+        return (
+            "Coordinates were resolved, but all linked places were excluded "
+            "as countries, first-level regions, or features over 100 km wide."
+        )
+    return (
+        "Multiple candidate locations are more than 75 km apart: "
+        + ", ".join(dict.fromkeys(city["page"] for city in cities))
+    )
+
+
 def location_terms(links, resolved):
     terms = set()
 
@@ -171,6 +212,9 @@ def location_terms(links, resolved):
         # didn't assign it a specific geographic type.
         if link["text"]:
             terms.add(link["text"])
+
+        # Preserve historical names/redirect aliases for redaction as well.
+        terms.add(link["title"])
 
         if info.get("page"):
             terms.add(info["page"])

@@ -2,15 +2,10 @@ import os
 import hashlib
 import uuid
 
-from dotenv import load_dotenv
 from supabase import create_client
+from config import load_environment
 
-load_dotenv()
-
-supabase = create_client(
-    os.environ["SUPABASE_URL"],
-    os.environ["SUPABASE_SECRET_KEY"]
-)
+load_environment()
 
 
 def make_event_id(
@@ -38,7 +33,7 @@ def make_event_id(
     return str(event_id), source_key
 
 
-def save_event(
+def build_event_rows(
     event_id,
     source_key,
     event_date,
@@ -59,11 +54,6 @@ def save_event(
         "headline": headline,
         "summary": summary,
     }
-    supabase.table("game_events").upsert(
-        event_row,
-        on_conflict="source_key"
-    ).execute()
-
     answer_row = {
         "event_id": event_id,
 
@@ -87,6 +77,18 @@ def save_event(
         "location_confidence": 1.0,
     }
 
+    return event_row, answer_row
+
+
+def save_event(**values):
+    event_row, answer_row = build_event_rows(**values)
+    supabase = create_client(
+        os.environ["SUPABASE_URL"], os.environ["SUPABASE_SECRET_KEY"]
+    )
+    # Separate requests: rerun identical input to repair a failed answer write.
+    supabase.table("game_events").upsert(
+        event_row, on_conflict="source_key"
+    ).execute()
     supabase.table("event_answers").upsert(
         answer_row,
         on_conflict="event_id"

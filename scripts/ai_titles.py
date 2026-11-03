@@ -1,23 +1,15 @@
 import os
-from pathlib import Path
-
-from dotenv import load_dotenv
 from google import genai
 from google.genai import types
+from config import load_environment
+import time
 
-
-ENV_FILE = Path(__file__).resolve().parent / ".env"
-load_dotenv(ENV_FILE)
-
-GEMINI_MODEL = os.getenv("GEMINI_MODEL")
-
-client = genai.Client(
-    api_key=os.environ["GEMINI_API_KEY"]
-)
+load_environment()
 
 
 def generate_headline(summary, category=None):
     try:
+        client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
         prompt = f"""
 Create a short news headline for the event below.
 
@@ -34,9 +26,9 @@ Category: {category or "Unknown"}
 Event:
 {summary}
 """
-
+        time.sleep(5)
         response = client.models.generate_content(
-            model=GEMINI_MODEL,
+            model=os.environ["GEMINI_MODEL"],
             contents=prompt,
             config=types.GenerateContentConfig(
                 temperature=0.2,

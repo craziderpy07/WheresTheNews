@@ -1,5 +1,6 @@
 from datetime import date, timedelta
 import time
+from config import configure_output
 
 from main import process_day
 
@@ -8,7 +9,6 @@ def two_years_ago(day):
     try:
         return day.replace(year=day.year - 2)
     except ValueError:
-        # Handles Feb 29
         return day.replace(
             year=day.year - 2,
             day=28
@@ -40,13 +40,14 @@ def backfill(start_date, end_date):
                 f"FAILED {current}: {error}"
             )
 
-        # Be nice to Wikipedia/Gemini.
+        # Avoid hitting usage rates for wiki and gemeni.
         time.sleep(0.5)
 
         current += timedelta(days=1)
 
 
 if __name__ == "__main__":
+    configure_output()
     backfill(
         date(2026, 9, 14),
         date.today()

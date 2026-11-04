@@ -13,8 +13,8 @@ def backfill(start_date, end_date, dry_run=False):
     time.sleep(10)
     if start_date > end_date:
         raise ValueError("Start date must not exceed end date.")
-    if end_date >= date(2006, 1, 1):
-        raise ValueError("Historical dates must be before 2006-01-01.")
+    if end_date >= date(2024, 10, 1):
+        raise ValueError("Historical dates must be before 2024-10-01.") #After this date, events are already saved
     total_days = (end_date - start_date).days + 1
     failed = []
     for offset in range(total_days):
@@ -74,10 +74,10 @@ def cli():
     parser = argparse.ArgumentParser(description=__doc__)
     modes = parser.add_subparsers(dest="mode", required=True)
     daily = modes.add_parser("daily", help="Backfill archived daily current-events pages.")
-    daily.add_argument("--start-date", type=date.fromisoformat, default=date(929, 1, 1)) #gemini usage limit hit here
+    daily.add_argument("--start-date", type=date.fromisoformat, default=date(929, 1, 1)) 
     daily.add_argument("--end-date", type=date.fromisoformat, default=date(2005, 1, 7))
     yearly = modes.add_parser("year", help="Backfill dated entries from year-page Events sections.")
-    yearly.add_argument("--start-year", type=int, default=1900)
+    yearly.add_argument("--start-year", type=int, default=900) #gemini usage limit hit here
     yearly.add_argument("--end-year", type=int)
     for mode in (daily, yearly):
         mode.add_argument("--dry-run", action="store_true", help="Preview both rows without database writes (still calls Wikipedia/Gemini).")

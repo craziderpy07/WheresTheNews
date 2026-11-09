@@ -25,6 +25,7 @@ def process_event(event, event_date, source_page_url, dry_run=False):
     print("RESOLVED LOCATIONS:", resolved)
     print("CITY CANDIDATES:", cities)
     print("CHOSEN LOCATION:", city)
+    print("YEAR FOUND:", event_date.year)
     if city is None:
         print("REJECTED:", location_rejection_reason(cities, resolved))
         return "rejected"

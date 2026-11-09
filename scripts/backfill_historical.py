@@ -4,6 +4,7 @@ import argparse
 from datetime import date, timedelta
 import time
 from config import configure_output
+from urllib.parse import quote
 
 from historical import extract_year_events, get_year_page
 from main import process_day, process_event
@@ -35,8 +36,8 @@ def backfill_years(start_year, end_year, dry_run=False):
     date(end_year, 1, 1)
     if start_year > end_year:
         raise ValueError("Start year must not exceed end year.")
-    if end_year >= 2006:
-        raise ValueError("Historical years must be before 2006.")
+    if end_year >= 2024:
+        raise ValueError("Historical years must be before 2024.")
     failed = []
     for year in range(start_year, end_year + 1):
         print(f"\nYEAR {year}")
@@ -48,9 +49,15 @@ def backfill_years(start_year, end_year, dry_run=False):
             events = extract_year_events(html, year)
             print(f"Found {len(events)} dated events.")
             counts = {"saved": 0, "rejected": 0, "previewed": 0, "failed": 0}
-            source_url = "https://en.wikipedia.org/wiki/" + page_name.replace(" ", "_")
+            year_url = "https://en.wikipedia.org/wiki/" + quote(page_name.replace(" ", "_"), safe="()")
             for event_date, event in events:
                 try:
+                    article_title = event.get("headline")
+                    source_url = (
+                        "https://en.wikipedia.org/wiki/"
+                        + quote(article_title.replace(" ", "_"), safe="()")
+                        if article_title else year_url
+                    )
                     status = process_event(event, event_date, source_url, dry_run=dry_run)
                     counts[status] += 1
                 except Exception as error:

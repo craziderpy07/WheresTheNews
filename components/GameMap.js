@@ -107,7 +107,7 @@ export default function GameMap({ guess, answer, locked, roundKey, onGuess }) {
     const { Cesium, viewer } = runtimeRef.current;
     viewer.camera.cancelFlight();
     viewer.entities.removeAll();
-    viewer.camera.setView({ destination: Cesium.Cartesian3.fromDegrees(-15, 20, 22000000), orientation: { heading: 0, pitch: -Cesium.Math.PI_OVER_TWO, roll: 0 } });
+    viewer.camera.setView({ destination: Cesium.Cartesian3.fromDegrees(-15, 20, 10000000), orientation: { heading: 0, pitch: -Cesium.Math.PI_OVER_TWO, roll: 0 } });
   }, [ready, roundKey]);
 
   useEffect(() => {

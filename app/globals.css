@@ -1430,3 +1430,871 @@ h1, h2 {
         transition-duration: .01ms !important;
     }
 }
+
+/* ========================================================================
+   15. MOBILE EXPERIENCE (PHONES ONLY)
+   Desktop rules above are intentionally unchanged. All new layout overrides
+   are limited to <= 640px; the mobile homepage guide is hidden on desktop.
+   ======================================================================== */
+
+/* Hide additional mobile-only markup without affecting desktop layout. */
+.brand-title-short,
+.mobile-nav-actions,
+.mobile-menu-backdrop,
+.mobile-home-guide,
+.mobile-description,
+.mobile-hero-stats {
+    display: none;
+}
+
+/* Preserve the desktop stats' original spacing after adding view-specific spans. */
+.hero-stats > .desktop-hero-stats,
+.hero-stats > .mobile-hero-stats {
+    padding: 0;
+}
+
+@media (max-width: 640px) {
+    /* --- Compact one-row navigation and accessible dropdown --- */
+    .page-shell {
+        width: calc(100% - 28px);
+    }
+
+    .nav-wrap {
+        z-index: 100;
+        border-bottom-width: 3px;
+    }
+
+    .nav {
+        position: relative;
+        z-index: 2;
+        min-height: 58px;
+        padding: 8px 0;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+    }
+
+    .brand {
+        min-width: 0;
+        gap: 8px;
+        font-size: .62rem;
+    }
+
+    .brand-icon {
+        width: 27px;
+        height: 27px;
+        font-size: 19px;
+    }
+
+    .brand-title-full {
+        display: none;
+    }
+
+    .brand-title-short {
+        display: inline;
+    }
+
+    .mobile-nav-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-left: auto;
+    }
+
+    .mobile-play-link,
+    .mobile-menu-toggle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 40px;
+        border: 2px solid #102b40;
+        border-radius: 0;
+        text-decoration: none;
+        font-family: var(--pixel-font);
+        font-weight: 400;
+        cursor: pointer;
+        box-shadow: 2px 2px 0 #071c2c;
+    }
+
+    .mobile-play-link {
+        padding: 0 12px;
+        background: #ff648e;
+        color: #102b40;
+        font-size: .54rem;
+    }
+
+    .mobile-menu-toggle {
+        width: 42px;
+        padding: 0;
+        background: #a7e9ec;
+        color: #102b40;
+        font-family: var(--reading-font);
+        font-size: 1.5rem;
+        line-height: 1;
+    }
+
+    .nav-links {
+        display: none;
+        position: absolute;
+        top: calc(100% + 3px);
+        right: 0;
+        left: 0;
+        z-index: 3;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        align-items: stretch;
+        gap: 5px;
+        padding: 12px;
+        border: 3px solid #092037;
+        background: #143753;
+        box-shadow: 5px 5px 0 #061d31;
+    }
+
+    .nav-links.mobile-nav-open {
+        display: flex;
+    }
+
+    .nav-links a,
+    .nav-links .link-button {
+        width: 100%;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        padding: 11px 14px;
+        border: 2px solid #436e85;
+        background: #1b4661;
+        color: #eafaff;
+        font-size: .96rem;
+        text-align: left;
+        line-height: 1.25;
+    }
+
+    .nav-links .signed-in {
+        padding: 9px 12px 4px;
+    }
+
+    .mobile-menu-backdrop {
+        display: block;
+        position: fixed;
+        inset: 58px 0 0;
+        z-index: 1;
+        width: 100%;
+        border: 0;
+        background: rgba(3, 15, 27, .55);
+        cursor: default;
+    }
+
+    /* --- Home: replace oversized hero with a shorter, focused first screen --- */
+    .home-page .pixel-landing {
+        min-height: 0;
+        padding: 34px 14px 28px;
+        gap: 0;
+    }
+
+    .home-page .pixel-hero-scene {
+        background-position: center 46%;
+    }
+
+    .home-page .hero-copy {
+        width: 100%;
+        max-width: 420px;
+        margin: 0 auto;
+        text-align: center;
+    }
+
+    .home-page .hero-kicker {
+        margin-bottom: 10px;
+        font-size: .5rem;
+        letter-spacing: 0;
+        line-height: 1.7;
+    }
+
+    .home-page .pixel-title {
+        gap: 5px;
+        margin: 0 auto 10px;
+        font-size: clamp(1.15rem, 6.5vw, 1.85rem);
+        line-height: 1.45;
+        text-shadow: -3px 3px 0 var(--pink), 3px -3px 0 var(--cyan);
+        -webkit-text-stroke: .5px #fff;
+    }
+
+    .home-page .hero-subtitle {
+        margin: 8px auto 0;
+        font-size: .52rem;
+        letter-spacing: 0;
+        line-height: 1.7;
+    }
+
+    .home-page .hero-description {
+        max-width: 32ch;
+        margin: 11px auto 0;
+        font-size: 1.01rem;
+        line-height: 1.3;
+        font-weight: 600;
+    }
+
+    .desktop-description,
+    .desktop-hero-stats {
+        display: none;
+    }
+
+    .mobile-description,
+    .mobile-hero-stats {
+        display: inline;
+    }
+
+    .home-page .hero-actions {
+        display: block;
+        max-width: 315px;
+        margin: 19px auto 13px;
+    }
+
+    .home-page .hero-actions .button {
+        width: 100%;
+        min-height: 47px;
+        padding: 10px 16px;
+        font-size: 1.05rem;
+    }
+
+    /* Account/history actions remain available in the mobile nav menu. */
+    .home-page .hero-actions .button:not(.primary) {
+        display: none;
+    }
+
+    .home-page .hero-stats {
+        margin: 6px auto 0;
+        font-size: .5rem;
+        line-height: 1.8;
+        letter-spacing: 0;
+    }
+
+    .home-page .scroll-cue {
+        display: none;
+    }
+
+    /* Replace the long desktop features, scoring strip, and modes grids with
+       an always-visible three-step overview + optional expandable details. */
+    .home-page > .feature-section {
+        display: none;
+    }
+
+    .mobile-home-guide {
+        display: block;
+        padding-top: 23px;
+        padding-bottom: 34px;
+    }
+
+    .mobile-guide-heading {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 10px;
+    }
+
+    .mobile-guide-heading h2 {
+        margin: 0;
+        color: #eef9ff;
+        font-size: .72rem;
+        line-height: 1.8;
+    }
+
+    .mobile-guide-heading > span {
+        color: #84e5e9;
+        font-family: var(--pixel-font);
+        font-size: .43rem;
+        white-space: nowrap;
+    }
+
+    .mobile-steps {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+        margin: 13px 0 18px;
+        padding: 0;
+        list-style: none;
+    }
+
+    .mobile-step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 3px;
+        min-width: 0;
+        min-height: 94px;
+        padding: 10px 5px;
+        border: 2px solid #4b7892;
+        background: #123550;
+        text-align: center;
+        box-shadow: 3px 3px 0 #061d31;
+    }
+
+    .mobile-step-icon {
+        color: #ffe6a3;
+        font-size: 1.8rem;
+        line-height: 1;
+    }
+
+    .mobile-step strong {
+        color: #8bf1ed;
+        font-family: var(--pixel-font);
+        font-size: .54rem;
+        line-height: 1.7;
+    }
+
+    .mobile-step small {
+        color: #d2e9f3;
+        font-size: .78rem;
+        line-height: 1.25;
+    }
+
+    .mobile-more-details {
+        margin-top: 9px;
+        border: 2px solid #4b7892;
+        background: #123550;
+    }
+
+    .mobile-more-details summary {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        min-height: 46px;
+        padding: 12px 13px;
+        cursor: pointer;
+        list-style: none;
+        color: #dbf8fa;
+        font-family: var(--pixel-font);
+        font-size: .52rem;
+        line-height: 1.7;
+    }
+
+    .mobile-more-details summary::-webkit-details-marker {
+        display: none;
+    }
+
+    .mobile-more-details summary span {
+        color: #8bf1ed;
+        font-family: var(--reading-font);
+        font-size: 1.4rem;
+        line-height: .8;
+    }
+
+    .mobile-more-details[open] summary {
+        border-bottom: 2px solid #4b7892;
+    }
+
+    .mobile-details-content {
+        padding: 10px 14px 15px;
+        color: #d2e9f3;
+        font-size: .93rem;
+        line-height: 1.4;
+    }
+
+    .mobile-details-content p {
+        margin: 3px 0 9px;
+    }
+
+    .mobile-details-content ul {
+        margin: 10px 0 0;
+        padding-left: 20px;
+    }
+
+    .mobile-details-content li + li {
+        margin-top: 6px;
+    }
+
+    /* --- Shared mobile adjustments for login, signup, play and globe --- */
+    .form-page {
+        min-height: calc(100svh - 58px);
+        padding: 22px 0;
+        place-items: start center;
+    }
+
+    .form-card {
+        padding: 18px;
+        box-shadow: 4px 4px 0 #061d31;
+    }
+
+    .form-card h1 {
+        font-size: 1.05rem;
+    }
+
+    .form-card input {
+        width: 100%;
+        min-height: 44px;
+    }
+
+    .play-page {
+        padding: 24px 0 48px;
+    }
+
+    .play-page .section-heading h1 {
+        font-size: clamp(1.1rem, 5vw, 1.6rem);
+    }
+
+    .play-page .section-heading p {
+        font-size: 1rem;
+        line-height: 1.35;
+    }
+
+    /* Horizontal mode cards take less vertical space; next card peeks in. */
+    .play-page .mode-grid {
+        display: grid;
+        grid-template-columns: none;
+        grid-auto-flow: column;
+        grid-auto-columns: minmax(210px, 82%);
+        gap: 12px;
+        margin: 18px 0;
+        padding: 3px 3px 12px;
+        overflow-x: auto;
+        overscroll-behavior-x: contain;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .play-page .mode-card {
+        min-height: 146px;
+        padding: 15px;
+        gap: 6px;
+        scroll-snap-align: start;
+    }
+
+    .play-page .mode-card strong {
+        font-size: .68rem;
+    }
+
+    .play-page .mode-icon {
+        font-size: 1.55rem;
+    }
+
+    .play-page .selection-banner {
+        padding: 11px 13px;
+        margin-bottom: 14px;
+    }
+
+    .play-page .game-layout {
+        gap: 13px;
+    }
+
+    .play-page .cesium-card {
+        margin-top: 16px;
+    }
+
+    .play-page .cesium-heading {
+        gap: 8px;
+        padding: 12px;
+    }
+
+    .play-page .cesium-container {
+        height: clamp(290px, 54svh, 430px);
+        aspect-ratio: auto;
+    }
+
+    .play-page .stage-row {
+        gap: 4px;
+        margin: 12px 0;
+    }
+
+    .play-page .stage-pill {
+        padding: 7px 2px;
+        font-size: .72rem;
+    }
+
+    .play-page .stage-pill span {
+        width: 24px;
+        height: 24px;
+    }
+}
+
+@media (max-width: 360px) {
+    .home-page .pixel-title {
+        font-size: 1.12rem;
+    }
+
+    .mobile-guide-heading h2 {
+        font-size: .64rem;
+    }
+
+    .mobile-guide-heading > span {
+        font-size: .39rem;
+    }
+
+    .mobile-step small {
+        font-size: .69rem;
+    }
+}
+
+
+/* ========================================================================
+   17. ONE-SCREEN MOBILE PLAY UI — ACTIVE GAME ONLY
+   Does not affect desktop gameplay, the play-mode picker, or completion pages.
+   The navigation above uses ~61px (58px navbar + 3px border).
+   ======================================================================== */
+
+/* Only the newly added mobile controls are hidden on larger screens. */
+.mobile-game-hud,
+.mobile-game-actionbar,
+.game-clue-expand {
+    display: none;
+}
+
+@media (max-width: 640px) {
+    /* Fixed *playing* interface, not a fixed mode picker/results screen. */
+    .play-page.play-round-page {
+        position: fixed;
+        inset: 61px 0 0;
+        z-index: 1;
+        width: 100%;
+        height: auto;
+        min-height: 0;
+        margin: 0;
+        padding: 9px 12px max(9px, env(safe-area-inset-bottom));
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-rows: auto auto minmax(0, 1fr) auto;
+        gap: 9px;
+        background: var(--bg);
+        overflow: hidden;
+    }
+
+    .play-round-page .game-desktop-header,
+    .play-round-page .game-desktop-stages,
+    .play-round-page .game-desktop-notice,
+    .play-round-page .game-desktop-actions,
+    .play-round-page .game-desktop-result {
+        display: none;
+    }
+
+    /* Allow the headline and globe to be separate rows in the same screen,
+       without mounting the Cesium globe twice. */
+    .play-round-page .game-layout {
+        display: contents;
+    }
+
+    /* --- Round progress and live total score --- */
+    .play-round-page .mobile-game-hud {
+        display: block;
+        min-width: 0;
+    }
+
+    .mobile-game-hud-kicker {
+        margin: 0 0 6px;
+        font-family: var(--pixel-font);
+        font-size: clamp(.40rem, 1.9vw, .49rem);
+        color: #8bf1ed;
+        line-height: 1.6;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .mobile-game-hud-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+    }
+
+    .mobile-game-progress {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .mobile-game-progress > strong {
+        display: block;
+        font-family: var(--pixel-font);
+        font-size: clamp(.56rem, 2.6vw, .72rem);
+        line-height: 1.4;
+        color: #eef9ff;
+    }
+
+    .mobile-game-progress-bars {
+        display: flex;
+        gap: 4px;
+        margin-top: 7px;
+        max-width: 164px;
+    }
+
+    .mobile-game-progress-bars span {
+        flex: 1;
+        height: 5px;
+        background: #51768b;
+    }
+
+    .mobile-game-progress-bars .is-current {
+        background: #58e3df;
+    }
+
+    .mobile-game-progress-bars .is-complete {
+        background: #ff94b3;
+    }
+
+    .mobile-game-score {
+        flex-shrink: 0;
+        text-align: right;
+        display: grid;
+        justify-items: end;
+        gap: 1px;
+    }
+
+    .mobile-game-score strong {
+        color: #ff94b3;
+        font-family: var(--pixel-font);
+        font-size: .79rem;
+        line-height: 1.2;
+    }
+
+    .mobile-game-score small {
+        font-family: var(--pixel-font);
+        color: #bad6e3;
+        font-size: .37rem;
+    }
+
+    .mobile-game-notice {
+        margin: 5px 0 0;
+        font-size: .82rem;
+        color: #ffcc9f;
+        line-height: 1.2;
+    }
+
+    /* --- Compact clue: headline remains readable beside the globe --- */
+    .play-round-page .game-clue-card {
+        min-height: 0;
+        max-height: min(29dvh, 205px);
+        min-width: 0;
+        overflow-x: hidden;
+        overflow-y: auto;
+        overscroll-behavior-y: contain;
+        padding: 11px 13px 9px;
+        margin: 0;
+        border-width: 2px;
+        box-shadow: none;
+        background: #123550;
+        scrollbar-width: thin;
+        scrollbar-color: #507c91 transparent;
+    }
+
+    .play-round-page .game-event-meta {
+        align-items: center;
+        flex-wrap: nowrap;
+        gap: 7px;
+        font-size: .72rem;
+        line-height: 1.1;
+    }
+
+    .play-round-page .game-event-meta .chip {
+        flex-shrink: 1;
+        min-width: 0;
+        max-width: 64%;
+        padding: 6px;
+        font-size: .72rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .play-round-page .game-event-meta > span:last-child {
+        white-space: nowrap;
+        font-size: .70rem;
+    }
+
+    .play-round-page .game-clue-title {
+        margin: 8px 0 4px;
+        color: #f5fcff;
+        font-family: var(--pixel-font);
+        font-size: clamp(.72rem, 3vw, .88rem);
+        line-height: 1.5;
+    }
+
+    .play-round-page .game-clue-summary {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        overflow: hidden;
+        margin: 6px 0 1px;
+        color: #e2f1f7;
+        font-size: .92rem;
+        line-height: 1.2;
+    }
+
+    .play-round-page .game-clue-card.is-expanded .game-clue-summary {
+        display: block;
+        overflow: visible;
+        -webkit-line-clamp: unset;
+        line-clamp: unset;
+    }
+
+    .play-round-page .game-clue-expand {
+        display: block;
+        width: 100%;
+        min-height: 28px;
+        margin-top: 5px;
+        padding: 4px 0 0;
+        border: 0;
+        background: none;
+        text-align: right;
+        font-size: .72rem;
+        font-weight: 700;
+        color: #8bf1ed;
+        cursor: pointer;
+    }
+
+    .play-round-page .game-clue-card .form-message {
+        font-size: .82rem;
+    }
+
+    /* --- Give all remaining flexible vertical space to Cesium --- */
+    .play-round-page .game-map {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+        height: 100%;
+        min-width: 0;
+        margin: 0;
+        border: 2px solid #4b7892;
+        background: #020b14;
+        box-shadow: none;
+        overflow: hidden;
+        isolation: isolate;
+    }
+
+    .play-round-page .game-map .cesium-container {
+        flex: 1 1 0%;
+        display: block;
+        width: 100%;
+        height: 100%;
+        min-height: 0;
+        aspect-ratio: auto;
+        background: #020b14;
+    }
+
+    /* Overlay replaces tall instructional heading above the map. */
+    .play-round-page .game-map > .cesium-heading:first-child {
+        position: absolute;
+        top: 7px;
+        left: 7px;
+        right: auto;
+        z-index: 2;
+        width: max-content;
+        max-width: calc(100% - 14px);
+        padding: 4px 7px;
+        border: 1px solid #507c91;
+        background: rgba(8, 34, 54, .86);
+        pointer-events: none;
+        font-size: .75rem;
+        line-height: 1.1;
+    }
+
+    .play-round-page .game-map > .cesium-heading:first-child p {
+        display: none;
+    }
+
+    .play-round-page .game-map > p.cesium-heading,
+    .play-round-page .game-map > p.form-message {
+        position: absolute;
+        z-index: 4;
+        top: 32px;
+        left: 7px;
+        right: 7px;
+        width: auto;
+        margin: 0;
+        padding: 6px;
+        background: rgba(8, 34, 54, .88);
+        font-size: .75rem;
+    }
+
+    /* --- Bottom actionbar always visible; guesses still use existing APIs --- */
+    .play-round-page .mobile-game-actionbar {
+        display: grid;
+        gap: 7px;
+        min-width: 0;
+        padding: 0;
+    }
+
+    .mobile-game-hint {
+        margin: 0;
+        font-size: .88rem;
+        color: #d2e9f3;
+        text-align: center;
+        line-height: 1.3;
+    }
+
+    .play-round-page .mobile-game-submit {
+        min-height: 45px;
+        width: 100%;
+        padding: 10px 12px;
+        margin: 0;
+        border-width: 2px;
+        box-shadow: 3px 3px 0 #071c2c;
+        font-family: var(--pixel-font);
+        font-size: clamp(.59rem, 2.6vw, .70rem);
+        line-height: 1.3;
+    }
+
+    .mobile-game-result {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 8px 10px;
+        background: #143753;
+        border: 2px solid #507c91;
+    }
+
+    .mobile-game-result > div {
+        display: grid;
+        gap: 2px;
+        min-width: 0;
+    }
+
+    .mobile-game-result > div span {
+        color: #8bf1ed;
+        font-family: var(--pixel-font);
+        font-size: .40rem;
+    }
+
+    .mobile-game-result > div strong {
+        color: #eef9ff;
+        font-size: .98rem;
+        line-height: 1.1;
+        max-height: 2.3em;
+        overflow: auto;
+    }
+
+    .mobile-game-result > div small {
+        color: #bad6e3;
+        font-size: .77rem;
+    }
+
+    .mobile-game-earned {
+        color: #ff94b3;
+        font-family: var(--pixel-font);
+        font-size: .76rem;
+        white-space: nowrap;
+    }
+}
+
+/* Short landscape phones cannot fit a practical globe, headline and controls
+   without some scrolling: preserve access to every control instead of clipping. */
+@media (max-width: 640px) and (max-height: 530px) {
+    .play-page.play-round-page {
+        position: relative;
+        inset: auto;
+        min-height: calc(100dvh - 61px);
+        height: auto;
+        grid-template-rows: auto auto minmax(200px, 1fr) auto;
+        overflow: visible;
+    }
+
+    .play-round-page .game-map {
+        height: 220px;
+    }
+
+    .play-round-page .game-clue-card {
+        max-height: 170px;
+    }
+}

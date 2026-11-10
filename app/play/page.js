@@ -83,6 +83,14 @@ export default function PlayPage() {
   const [forceReplay, setForceReplay] = useState(false);
   const [selectedMode, setSelectedMode] = useState('current');
 
+  // Mobile-only: expand the news clue without moving the player away from the globe.
+  const [clueExpanded, setClueExpanded] = useState(false);
+
+  useEffect(() => {
+    setClueExpanded(false);
+  }, [roundIndex]);
+
+
   // resumes the next unfinished round or brings back the finished results
   useEffect(() => {
     loadGameGlobe().catch(() => { });
@@ -415,16 +423,42 @@ export default function PlayPage() {
   let nextLabel = 'Next Round';
   if (results.length === ROUND_COUNT) nextLabel = 'View Results';
 
+
   return (
-    <section className="page-shell play-page">
-      <div className="daily-preview-header">
+    <section className="page-shell play-page play-round-page">
+      {/* Compact HUD is mobile-only; the desktop heading and round tiles remain intact. */}
+      <div className="mobile-game-hud">
+        <p className="mobile-game-hud-kicker">{gameTitle} · {formatDate(game.date)}</p>
+        <div className="mobile-game-hud-row">
+          <div className="mobile-game-progress">
+            <strong>ROUND {roundIndex + 1} / {ROUND_COUNT}</strong>
+            <div className="mobile-game-progress-bars" aria-label={`Round ${roundIndex + 1} of ${ROUND_COUNT}`}>
+              {game.events.map((stage, index) => (
+                <span
+                  key={stage.id}
+                  className={index < results.length ? 'is-complete' : index === roundIndex ? 'is-current' : ''}
+                  aria-hidden="true"
+                />
+              ))}
+            </div>
+          </div>
+          <div className="mobile-game-score" aria-label={`Total score ${total} out of 5,000 points`}>
+            <strong>{total.toLocaleString()}</strong>
+            <small>/ 5,000 PTS</small>
+          </div>
+        </div>
+        {notice && <p className="mobile-game-notice" role="status">{notice}</p>}
+      </div>
+
+      {/* Original desktop header and stage indicators. */}
+      <div className="daily-preview-header game-desktop-header">
         <div className="section-heading">
           <span className="eyebrow">{gameTitle} · {formatDate(game.date)}</span>
           <h1>Round {roundIndex + 1} of {ROUND_COUNT}</h1>
         </div>
         <div className="daily-max-score"><strong>{total.toLocaleString()}</strong><span>total / 5,000 points</span></div>
       </div>
-      <div className="stage-row" aria-label="round progress">
+      <div className="stage-row game-desktop-stages" aria-label="round progress">
         {game.events.map((stage, index) => {
           let className = 'stage-pill';
           if (index === roundIndex) className += ' active';
@@ -435,20 +469,35 @@ export default function PlayPage() {
           return <div className={className} key={stage.id}><span>{index + 1}</span><small>{label}</small></div>;
         })}
       </div>
-      {notice && <p className="muted" role="status">{notice}</p>}
+      {notice && <p className="muted game-desktop-notice" role="status">{notice}</p>}
+
       <div className="game-layout">
-        <article className="feature-card">
-          <div className="game-event-meta"><span className="chip">{event.category || 'Current Events'}</span><span>{formatDate(event.eventDate)}</span></div>
-          <h2>{event.headline}</h2>
-          <p>{event.summary}</p>
+        <article className={`feature-card game-clue-card${clueExpanded ? ' is-expanded' : ''}`}>
+          <div className="game-event-meta">
+            <span className="chip">{event.category || 'Current Events'}</span>
+            <span>{formatDate(event.eventDate)}</span>
+          </div>
+          <h2 className="game-clue-title">{event.headline}</h2>
+          <p className="game-clue-summary" id="game-clue-summary">{event.summary}</p>
+          <button
+            type="button"
+            className="game-clue-expand"
+            aria-controls="game-clue-summary"
+            aria-expanded={clueExpanded}
+            onClick={() => setClueExpanded(open => !open)}
+          >
+            {clueExpanded ? '▲ SHOW LESS' : '▼ READ FULL CLUE'}
+          </button>
           {error && <div className="form-message" role="alert">{error}</div>}
+
+          {/* Keep the original desktop guess and result controls. */}
           {!roundResult && (
-            <div className="button-row">
+            <div className="button-row game-desktop-actions">
               <button type="button" className="button primary full" disabled={!guess || phase !== 'guessing'} onClick={confirmGuess}>{confirmLabel}</button>
             </div>
           )}
           {roundResult && (
-            <div className="selection-banner" aria-live="polite">
+            <div className="selection-banner game-desktop-result" aria-live="polite">
               <span className="eyebrow">Correct location</span>
               <h3>{roundResult.answer.locationName}</h3>
               <p>{formatDistance(roundResult.distanceKm)} from your guess</p>
@@ -457,8 +506,40 @@ export default function PlayPage() {
             </div>
           )}
         </article>
-        {/* connects the globe to the current guess and keeps the pin locked after confirming */}
+
+        {/* One shared interactive globe, NOT two mounted Cesium instances. */}
         <GameMap guess={guess} answer={answer} locked={phase !== 'guessing'} roundKey={event.id} onGuess={placeGuess} />
+      </div>
+
+      {/* Fixed-in-layout mobile action area. Both buttons use the existing handlers. */}
+      <div className="mobile-game-actionbar">
+        {roundResult ? (
+          <>
+            <div className="mobile-game-result" aria-live="polite">
+              <div>
+                <span>CORRECT LOCATION</span>
+                <strong>{roundResult.answer.locationName}</strong>
+                <small>{formatDistance(roundResult.distanceKm)} away</small>
+              </div>
+              <strong className="mobile-game-earned">+{roundResult.points.toLocaleString()}</strong>
+            </div>
+            <button type="button" className="button primary mobile-game-submit" onClick={nextRound}>{nextLabel}</button>
+          </>
+        ) : (
+          <>
+            <p className="mobile-game-hint" role="status">
+              {guess ? '✓ Pin placed — ready to submit' : '⌖ Tap the globe to place your pin'}
+            </p>
+            <button
+              type="button"
+              className="button primary mobile-game-submit"
+              disabled={!guess || phase !== 'guessing'}
+              onClick={confirmGuess}
+            >
+              {phase === 'submitting' ? 'SCORING YOUR GUESS...' : 'SUBMIT GUESS'}
+            </button>
+          </>
+        )}
       </div>
     </section>
   );

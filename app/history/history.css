@@ -28,4 +28,28 @@
 .history-selection p { margin: 0; color: #aec5db; }
 .history-selection .button { margin: 0; }
 .history-footer { margin-top: 22px; }
-@media (max-width: 720px) { .history-calendar-wrap { grid-template-columns: 1fr; } .history-tabs { width: 100%; } .history-tabs button { flex: 1; } .history-game { padding: 14px; } }
+.leaderboard-container { display: flex; flex-direction: column; gap: 20px; }
+.leaderboard-container h2 { margin: 0; color: #fff; font-size: 1.25rem; }
+.leaderboard-content { display: flex; flex-direction: column; gap: 20px; }
+.histogram-section { display: flex; flex-direction: column; gap: 12px; }
+.histogram-section h3 { margin: 0; color: #f7fbff; font-size: 1rem; font-weight: 600; }
+.leaderboard-chart { width: 100%; height: 190px; }
+.user-position-section { padding: 16px; background: #10283e; border: 1px solid #26435b; border-radius: 12px; }
+.user-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.stat-item { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+.stat-label { font-size: 0.82rem; color: #96b7d5; }
+.stat-value { color: #f7fbff; font-size: 1.1rem; }
+.top-players-section { display: flex; flex-direction: column; gap: 12px; }
+.top-players-section h3 { margin: 0; color: #f7fbff; font-size: 1rem; font-weight: 600; }
+.top-players-list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.top-players-list li { display: flex; align-items: center; gap: 12px; padding: 12px; background: #10283e; border: 1px solid #26435b; border-radius: 10px; }
+.top-players-list li.current-user { background: #103b3b; border-color: #38d3a6; }
+.player-rank { display: flex; align-items: center; justify-content: center; min-width: 35px; }
+.rank-number { font-weight: 700; color: #3b7fc9; font-size: 1rem; }
+.top-players-list li.current-user .rank-number { color: #27d499; }
+.player-info { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+.player-info strong { color: #f7fbff; }
+.player-score { font-size: 0.9rem; color: #96b7d5; }
+.muted { margin: 0; color: #7fa9c5; font-size: 0.9rem; }
+.form-message { margin: 0; padding: 12px; background: #2e1a1a; border: 1px solid #a94444; border-radius: 8px; color: #f4b0b0; font-size: 0.9rem; }
+@media (max-width: 720px) { .history-calendar-wrap { grid-template-columns: 1fr; } .history-tabs { width: 100%; } .history-tabs button { flex: 1; } .history-game { padding: 14px; } .user-stats { grid-template-columns: 1fr; } }

@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import GameMap, { loadGameGlobe } from '../../components/GameMap';
+import Leaderboard from '../../components/Leaderboard';
 import { getSupabaseBrowserClient } from '../../lib/supabaseClient';
 import { GAME_MODES, ROUND_COUNT, getChallengeDate, isValidCoordinates } from '../../lib/gameRules';
 
@@ -390,6 +391,10 @@ export default function PlayPage() {
             </li>
           ))}
         </ol>
+        <div className="leaderboard-container">
+          <h2>Leaderboard</h2>
+          <Leaderboard challengeDate={game?.date} />
+        </div>
         {saveStatus === 'saving' && <p className="muted" role="status">Saving your score to your account...</p>}
         {saveStatus === 'saved' && <p className="muted" role="status">Score saved! <Link href="/history">View your game history</Link>.</p>}
         {saveStatus === 'login' && <p className="muted">Your score is saved in this browser. <Link href={`/login?next=${encodeURIComponent(game.type === 'daily' ? `/play?date=${game.date}` : '/play')}`}>Log in</Link> to add it to your account history.</p>}

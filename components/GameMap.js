@@ -102,6 +102,21 @@ export default function GameMap({ guess, answer, locked, roundKey, onGuess }) {
     };
   }, []);
 
+
+// Recalculate Cesium's canvas size when the responsive game map changes size.
+// Important on phones when the browser address bar expands/collapses.
+useEffect(() => {
+  if (!ready || !containerRef.current || typeof ResizeObserver === 'undefined') return;
+  const observer = new ResizeObserver(() => {
+    const runtime = runtimeRef.current;
+    if (!runtime || runtime.viewer.isDestroyed()) return;
+    if (typeof runtime.viewer.resize === 'function') runtime.viewer.resize();
+    runtime.viewer.scene.requestRender();
+  });
+  observer.observe(containerRef.current);
+  return () => observer.disconnect();
+}, [ready]);
+
   useEffect(() => {
     if (!ready) return;
     const { Cesium, viewer } = runtimeRef.current;

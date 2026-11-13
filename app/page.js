@@ -52,8 +52,13 @@ export default function HomePage() {
           </h1>
           <p className="hero-subtitle">READ THE HEADLINE. FIND THE PLACE.</p>
           <p className="lead hero-description">
-            Five headlines from around the world. Five chances to pinpoint the story
-            on the globe. Get closer to the right location to score more points.
+            <span className="desktop-description">
+              Five headlines from around the world. Five chances to pinpoint the story
+              on the globe. Get closer to the right location to score more points.
+            </span>
+            <span className="mobile-description">
+              Read five headlines. Drop pins on the globe. Score up to 5,000 points.
+            </span>
           </p>
           <div className="button-row hero-actions">
             <Link className="button primary" href="/play">&#9658; START GAME</Link>
@@ -66,7 +71,12 @@ export default function HomePage() {
               </>
             ))}
           </div>
-          <p className="hero-stats">5 HEADLINES <span aria-hidden="true">·</span> 1,000 POINTS EACH <span aria-hidden="true">·</span> NEW DAILY CHALLENGE</p>
+          <p className="hero-stats">
+            <span className="desktop-hero-stats">
+              5 HEADLINES <span aria-hidden="true">·</span> 1,000 POINTS EACH <span aria-hidden="true">·</span> NEW DAILY CHALLENGE
+            </span>
+            <span className="mobile-hero-stats">5 ROUNDS <span aria-hidden="true">·</span> 5,000 MAX POINTS</span>
+          </p>
         </div>
 
         <a className="scroll-cue" href="#how-to-play">▼ HOW TO PLAY</a>
@@ -126,15 +136,44 @@ export default function HomePage() {
             <p>News from all time periods.</p>
           </article>
         </div>
+      </section>
 
-        <details className="status-card dev-status">
-          <summary>DEVELOPMENT STATUS</summary>
-          <p>
-            <strong>Current milestone:</strong> Functional Requirements 1–7 are implemented.
-            The daily five-headline game, map submission, distance calculation, scoring,
-            history, and leaderboard are represented in the interface/data model, but
-            remain part of the next implementation milestone.
-          </p>
+      {/* Compact mobile guide replaces the long homepage feature grids on phones.
+          The original desktop content above remains untouched. */}
+      <section className="mobile-home-guide page-shell" aria-labelledby="mobile-guide-title">
+        <div className="mobile-guide-heading">
+          <h2 id="mobile-guide-title">HOW TO PLAY</h2>
+          <span>3 QUICK STEPS</span>
+        </div>
+
+        <ol className="mobile-steps">
+          <li className="mobile-step">
+            <span className="mobile-step-icon" aria-hidden="true">▤</span>
+            <strong>READ</strong>
+            <small>A headline</small>
+          </li>
+          <li className="mobile-step">
+            <span className="mobile-step-icon" aria-hidden="true">⌖</span>
+            <strong>PIN</strong>
+            <small>On the globe</small>
+          </li>
+          <li className="mobile-step">
+            <span className="mobile-step-icon" aria-hidden="true">★</span>
+            <strong>SCORE</strong>
+            <small>Earn points</small>
+          </li>
+        </ol>
+
+        <details className="mobile-more-details">
+          <summary>GAME MODES &amp; SCORING <span aria-hidden="true">+</span></summary>
+          <div className="mobile-details-content">
+            <p>Guess the locations of five headlines. Each round is worth up to 1,000 points, for a maximum daily score of 5,000.</p>
+            <ul>
+              <li><strong>Historical:</strong> News from the past.</li>
+              <li><strong>Current:</strong> Daily and random news rounds.</li>
+              <li><strong>Mixed:</strong> Headlines from all time periods.</li>
+            </ul>
+          </div>
         </details>
       </section>
     </div>

@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import { getSupabaseBrowserClient } from '../../lib/supabaseClient';
 import { getChallengeDate } from '../../lib/gameRules';
+import Leaderboard from '../../components/Leaderboard';
 import './history.css';
 
 const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -151,6 +152,10 @@ export default function HistoryPage() {
             </>}
             {!loading && !selected && <p className="muted">Select an available date to play or replay a previous daily challenge.</p>}
             <Link href="/play" className="button ghost">Today's Challenge</Link>
+            <div className="leaderboard-container">
+              <h2>Leaderboard</h2>
+              <Leaderboard challengeDate={selected} />
+            </div>
           </div>
         </div>}
       </>}

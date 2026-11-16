@@ -91,7 +91,6 @@ export default function PlayPage() {
     setClueExpanded(false);
   }, [roundIndex]);
 
-
   // resumes the next unfinished round or brings back the finished results
   useEffect(() => {
     loadGameGlobe().catch(() => { });
@@ -103,6 +102,7 @@ export default function PlayPage() {
     setForceReplay(replay);
     if (!replay) {
       if (dateFromUrl) {
+        
         // Explicit calendar dates only resume an unfinished run for that exact day.
         // A finished local run should not block the user from playing that day again.
         const active = readSavedGame(ACTIVE_GAME_KEY);
@@ -188,6 +188,7 @@ export default function PlayPage() {
         const saved = readSavedGame(dailyProgressKey(nextGame.date)) ||
           findDailyCompletion(nextGame.date) ||
           (active?.type === 'daily' && active.date === nextGame.date ? active : null);
+        
         // Explicit calendar selections may resume in-progress runs, but must not
         // reopen an already-finished local result instead of starting a new game.
         const mayResume = !dateOverride || saved?.results.length < ROUND_COUNT;
@@ -431,7 +432,8 @@ export default function PlayPage() {
 
   return (
     <section className="page-shell play-page play-round-page">
-      {/* Compact HUD is mobile-only; the desktop heading and round tiles remain intact. */}
+    
+      // mobile layout
       <div className="mobile-game-hud">
         <p className="mobile-game-hud-kicker">{gameTitle} · {formatDate(game.date)}</p>
         <div className="mobile-game-hud-row">
@@ -455,7 +457,7 @@ export default function PlayPage() {
         {notice && <p className="mobile-game-notice" role="status">{notice}</p>}
       </div>
 
-      {/* Original desktop header and stage indicators. */}
+      // original desk top layout
       <div className="daily-preview-header game-desktop-header">
         <div className="section-heading">
           <span className="eyebrow">{gameTitle} · {formatDate(game.date)}</span>
@@ -495,7 +497,7 @@ export default function PlayPage() {
           </button>
           {error && <div className="form-message" role="alert">{error}</div>}
 
-          {/* Keep the original desktop guess and result controls. */}
+          // original desk top layout
           {!roundResult && (
             <div className="button-row game-desktop-actions">
               <button type="button" className="button primary full" disabled={!guess || phase !== 'guessing'} onClick={confirmGuess}>{confirmLabel}</button>
@@ -512,11 +514,10 @@ export default function PlayPage() {
           )}
         </article>
 
-        {/* One shared interactive globe, NOT two mounted Cesium instances. */}
         <GameMap guess={guess} answer={answer} locked={phase !== 'guessing'} roundKey={event.id} onGuess={placeGuess} />
       </div>
 
-      {/* Fixed-in-layout mobile action area. Both buttons use the existing handlers. */}
+      // mobile layout
       <div className="mobile-game-actionbar">
         {roundResult ? (
           <>

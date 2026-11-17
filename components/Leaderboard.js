@@ -183,28 +183,6 @@ export default function Leaderboard({ challengeDate }) {
           </div>
         </div>
       )}
-
-      {/* top 5 players */}
-      <div className="top-players-section">
-        <h3>Top Players</h3>
-        {topPlayers && topPlayers.length > 0 ? (
-          <ol className="top-players-list">
-            {topPlayers.map((player, index) => (
-              <li key={player.userId} className={player.isCurrentUser ? 'current-user' : ''}>
-                <div className="player-rank">
-                  <span className="rank-number">#{index + 1}</span>
-                </div>
-                <div className="player-info">
-                  <strong>{player.userName}</strong>
-                  <span className="player-score">{player.score.toLocaleString()} pts</span>
-                </div>
-              </li>
-            ))}
-          </ol>
-        ) : (
-          <p className="muted">No scores yet</p>
-        )}
-      </div>
     </div>
   );
 }

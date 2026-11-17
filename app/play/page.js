@@ -57,9 +57,9 @@ async function postGameRequest(path, body, signal) {
   try {
     data = await response.json();
   } catch {
-    throw new Error('the game could not be reached. please try again.');
+    throw new Error('The game could not be reached. Please try again.');
   }
-  if (!response.ok) throw new Error(data.error || 'the game request failed. Please try again.');
+  if (!response.ok) throw new Error(data.error || 'The game request failed. Please try again.');
   return data;
 }
 

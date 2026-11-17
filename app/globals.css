@@ -8,7 +8,7 @@
  * IMPORTANT: Edit later pixel-art overrides when adjusting the current theme.
  */
 
-@import url("https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;600;700&family=Press+Start+2P&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Jersey+15&display=swap");
 
 @import "cesium/Build/Cesium/Widgets/widgets.css";
 
@@ -37,7 +37,7 @@ html, body {
     min-height: 100%;
     background: radial-gradient(circle at 80% 10%, #102b48 0, var(--bg) 38%);
     color: var(--text);
-    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-family: var(--reading-font);
 }
 
 a {
@@ -47,7 +47,6 @@ a {
 button, input {
     font: inherit;
 }
-
 
 /* ========================================================================
    02. SHARED LAYOUT, NAVIGATION, AND BUTTONS
@@ -627,10 +626,13 @@ h1 {
         border-top: 1px solid var(--line);
         padding: 18px 0 0;
     }
+    /* Retained from globals(8).css: allow wide leaderboards to scroll on mobile. */
     .leaderboard-container {
         overflow-x: auto;
     }
 }
+
+
 /* ========================================================================
    06. GAME LAYOUT AND RESULTS
    ======================================================================== */
@@ -709,8 +711,8 @@ h1 {
     --pink: #ff578f;
     --cyan: #31cbe2;
     --cream: #fff9e6;
-    --pixel-font: "Press Start 2P", "Courier New", monospace;
-    --reading-font: "Pixelify Sans", "Courier New", monospace;
+    --pixel-font: "Jersey 15", "Courier New", monospace;
+    --reading-font: "Jersey 15", "Courier New", monospace;
 }
 
 
@@ -726,7 +728,7 @@ html, body {
     background-image: repeating-linear-gradient(0deg, transparent 0 5px, rgba(132, 197, 218, .025) 5px 6px);
     color: var(--text);
     font-family: var(--reading-font);
-    font-size: 19px;
+    font-size: 22px;
     line-height: 1.45;
 }
 
@@ -2297,5 +2299,580 @@ h1, h2 {
 
     .play-round-page .game-clue-card {
         max-height: 170px;
+    }
+}
+
+/* ==========================================
+   JERSEY 15 — GAME TEXT READABILITY
+   ========================================== */
+
+/* Improve numerical readability */
+.daily-max-score strong,
+.points-preview strong,
+.stage-pill span,
+.score-strip strong {
+    font-family: var(--reading-font);
+    font-variant-numeric: tabular-nums;
+    font-weight: 400;
+}
+
+/* Improve news headline readability */
+.game-layout .feature-card h2 {
+    font-family: var(--reading-font);
+    line-height: 1.45;
+    letter-spacing: 0.03em;
+}
+
+/* Improve news description readability */
+.game-layout .feature-card p {
+    font-family: var(--reading-font);
+    line-height: 1.65;
+    letter-spacing: 0.02em;
+}
+
+.home-page .hero-description,
+.nav-wrap .brand,
+.nav-wrap .nav-links a,
+.nav-wrap .link-button,
+.home-page .hero-actions .button,
+.game-layout .feature-card p,
+.game-layout .feature-card h2 {
+    font-weight: 400;
+}
+
+@media (min-width: 801px) {
+    .nav-wrap .brand {
+        font-size: clamp(21px, 1.95vw, 26px);
+        letter-spacing: .025em;
+        line-height: 1.3;
+    }
+
+    .nav-wrap .nav-links a,
+    .nav-wrap .link-button {
+        font-size: clamp(23px, 1.95vw, 27px);
+        line-height: 1.15;
+        letter-spacing: .025em;
+    }
+
+    /* Home: large title + legible tagline/body/buttons */
+    .home-page .hero-kicker {
+        font-size: clamp(18px, 1.8vw, 23px);
+        letter-spacing: .07em;
+        line-height: 1.3;
+        margin-bottom: 17px;
+    }
+
+    .home-page .pixel-title {
+        font-size: clamp(82px, 10.8vw, 144px);
+        line-height: 1.02;
+        gap: 9px;
+        letter-spacing: .01em;
+        margin-bottom: 17px;
+    }
+
+    .home-page .hero-subtitle {
+        font-size: clamp(21px, 2.05vw, 28px);
+        letter-spacing: .09em;
+        line-height: 1.3;
+        margin: 12px auto 10px;
+    }
+
+    .home-page .hero-description {
+        max-width: 650px;
+        margin-top: 12px;
+        font-size: clamp(27px, 2.45vw, 34px);
+        line-height: 1.34;
+        letter-spacing: .012em;
+    }
+
+    .home-page .hero-actions {
+        margin: 22px auto 13px;
+    }
+
+    .home-page .hero-actions .button {
+        font-size: clamp(24px, 2.2vw, 30px);
+        line-height: 1;
+        letter-spacing: .02em;
+    }
+
+    .home-page .hero-stats {
+        font-size: clamp(16px, 1.45vw, 20px);
+        line-height: 1.5;
+        letter-spacing: .04em;
+    }
+
+    .home-page .scroll-cue {
+        font-size: 18px;
+        line-height: 1.4;
+    }
+
+    /* Supporting sections and other desktop pages */
+    .compact-heading h2,
+    .daily-preview h2 {
+        font-size: clamp(36px, 3.5vw, 49px);
+    }
+
+    .compact-heading p,
+    .daily-preview-header p,
+    .feature-card p {
+        font-size: clamp(24px, 2.1vw, 29px);
+        line-height: 1.42;
+    }
+
+    .feature-card h3,
+    .mode-card strong {
+        font-size: clamp(25px, 2.1vw, 30px);
+        line-height: 1.32;
+    }
+
+    .feature-number,
+    .score-strip small,
+    .eyebrow {
+        font-size: clamp(16px, 1.35vw, 19px);
+    }
+
+    .score-strip strong {
+        font-size: 44px;
+    }
+
+    .mode-card span,
+    .mode-card small,
+    .selection-banner,
+    .stage-pill small,
+    .game-event-meta,
+    .chip {
+        font-size: clamp(21px, 1.8vw, 26px);
+    }
+
+    .stage-pill span {
+        font-size: 24px;
+    }
+
+    .daily-max-score strong,
+    .points-preview strong {
+        font-size: 46px;
+    }
+
+    .daily-max-score span,
+    .points-preview small {
+        font-size: 22px;
+    }
+
+    .game-layout .feature-card h2 {
+        font-size: clamp(36px, 3.6vw, 50px);
+        line-height: 1.2;
+        letter-spacing: .02em;
+    }
+
+    .game-layout .feature-card p {
+        font-size: clamp(24px, 2.2vw, 30px);
+        line-height: 1.36;
+        letter-spacing: .012em;
+    }
+
+    .cesium-heading strong,
+    .form-card label,
+    .form-card input {
+        font-size: 27px;
+    }
+
+    .cesium-heading p {
+        font-size: 24px;
+        line-height: 1.35;
+    }
+}
+
+@media (max-width: 640px) {
+    .nav-wrap .brand {
+        font-size: 17px;
+    }
+
+    .mobile-play-link {
+        font-size: 17px;
+    }
+
+    .nav-links a,
+    .nav-links .link-button {
+        font-size: 22px;
+    }
+
+    .home-page .hero-kicker {
+        font-size: 15px;
+    }
+
+    .home-page .pixel-title {
+        font-size: clamp(34px, 9.3vw, 48px);
+        line-height: 1.2;
+    }
+
+    .home-page .hero-subtitle {
+        font-size: 16px;
+    }
+
+    .home-page .hero-description {
+        font-size: 23px;
+        font-weight: 400;
+        line-height: 1.25;
+        max-width: 33ch;
+    }
+
+    .home-page .hero-actions .button {
+        font-size: 25px;
+    }
+
+    .home-page .hero-stats {
+        font-size: 14px;
+    }
+
+    .mobile-guide-heading h2 {
+        font-size: 20px;
+    }
+
+    .mobile-guide-heading > span,
+    .mobile-step strong {
+        font-size: 15px;
+    }
+
+    .mobile-step small,
+    .mobile-more-details summary {
+        font-size: 18px;
+    }
+
+    /* Mobile gameplay stays one-screen: larger characters, compact rows. */
+    .mobile-game-hud-kicker {
+        font-size: 14px;
+    }
+
+    .mobile-game-progress > strong {
+        font-size: 23px;
+    }
+
+    .mobile-game-score strong {
+        font-size: 29px;
+    }
+
+    .mobile-game-score small {
+        font-size: 14px;
+    }
+
+    .play-round-page .game-event-meta,
+    .play-round-page .game-event-meta .chip,
+    .play-round-page .game-event-meta > span:last-child {
+        font-size: 17px;
+    }
+
+    .play-round-page .game-clue-title {
+        font-size: clamp(23px, 6vw, 27px);
+        line-height: 1.16;
+    }
+
+    .play-round-page .game-clue-summary {
+        font-size: 23px;
+        line-height: 1.15;
+    }
+
+    .play-round-page .game-clue-expand {
+        font-size: 19px;
+    }
+
+    .mobile-game-hint {
+        font-size: 19px;
+    }
+
+    .play-round-page .mobile-game-submit {
+        font-size: 23px;
+        line-height: 1.1;
+    }
+}
+
+/* Avoid cramped title/hero on very small phone widths. */
+@media (max-width: 360px) {
+    .home-page .pixel-title {
+        font-size: 32px;
+    }
+
+    .home-page .hero-subtitle {
+        font-size: 15px;
+    }
+
+    .play-round-page .game-clue-summary {
+        font-size: 21px;
+    }
+}
+
+.home-page .pixel-title {
+    filter:
+        drop-shadow(1px 0 0 #102b40)
+        drop-shadow(-1px 0 0 #102b40)
+        drop-shadow(0 1px 0 #102b40)
+        drop-shadow(0 -1px 0 #102b40);
+}
+
+/* ================================================================
+   SHARED SKY + MOVING PIXEL CLOUDS
+
+   Asset required: public/pixel-clouds.svg
+   ================================================================ */
+
+:root {
+    --wtn-sky: #b5e1e8; /* Matches the light-blue homepage hero */
+    --wtn-sky-ink: #17344d;
+}
+
+/* Clouds travel exactly one repeating SVG tile, so the loop is seamless. */
+@keyframes wtn-cloud-drift {
+    from { background-position: 0 0; }
+    to   { background-position: 1400px 0; }
+}
+
+/* ---------------------------------------------------------------
+   HOME PAGE: keep the existing pixel-world.svg scene, add moving
+   clouds between the sky artwork and your title/buttons.
+   --------------------------------------------------------------- */
+.home-page .pixel-landing::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0; /* hero content already uses z-index: 2 */
+    pointer-events: none;
+    background-image: url('/pixel-clouds.svg');
+    background-repeat: repeat;
+    background-size: 1400px 650px;
+    opacity: .95;
+    image-rendering: pixelated;
+    animation: wtn-cloud-drift 95s linear infinite;
+}
+
+/* ---------------------------------------------------------------
+   PLAY PAGE: match the same sky-blue background without changing
+   dark game cards, the Cesium globe, or the navigation bar.
+   :has() is supported by modern browsers, including Chrome.
+   --------------------------------------------------------------- */
+html:has(.play-page),
+body:has(.play-page) {
+    background-color: var(--wtn-sky);
+    background-image: repeating-linear-gradient(
+        0deg,
+        transparent 0 5px,
+        rgba(42, 111, 140, .035) 5px 6px
+    );
+}
+
+/* Animated clouds sit BELOW PLAY content, not over the map. */
+body:has(.play-page)::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image: url('/pixel-clouds.svg');
+    background-repeat: repeat;
+    background-size: 1400px 650px;
+    image-rendering: pixelated;
+    opacity: .95;
+    animation: wtn-cloud-drift 110s linear infinite;
+}
+
+/* Layer game content over the clouds, including while navigating. */
+body:has(.play-page) > main {
+    position: relative;
+    z-index: 1;
+}
+
+/* Only headers that sit directly on the sky need darker text.
+   Leave text INSIDE the dark cards unchanged. */
+.play-page > .section-heading,
+.play-page > .daily-preview-header .section-heading {
+    color: var(--wtn-sky-ink);
+}
+
+.play-page > .section-heading h1,
+.play-page > .daily-preview-header .section-heading h1 {
+    color: #102c45;
+    text-shadow: none;
+}
+
+.play-page > .section-heading .eyebrow,
+.play-page > .daily-preview-header .section-heading .eyebrow {
+    color: #176785;
+    text-shadow: none;
+}
+
+.play-page > .section-heading p,
+.play-page > .daily-preview-header .section-heading p,
+.play-page > .muted {
+    color: #244960;
+}
+
+.play-page > .form-message {
+    color: #96384c;
+}
+
+/* ---------------------------------------------------------------
+   MOBILE GAME: this existing one-screen layout uses a FIXED panel
+   with a dark background, so give that panel the same clouded sky.
+   The game cards and globe themselves stay dark and readable.
+   --------------------------------------------------------------- */
+@media (max-width: 640px) {
+    .play-page.play-round-page {
+        background-color: var(--wtn-sky);
+        background-image: url('/pixel-clouds.svg');
+        background-repeat: repeat;
+        background-size: 1400px 650px;
+        animation: wtn-cloud-drift 110s linear infinite;
+    }
+
+    /* HUD text is now on light blue rather than a navy background. */
+    .play-round-page .mobile-game-hud-kicker {
+        color: #176785;
+        text-shadow: none;
+    }
+    .play-round-page .mobile-game-progress > strong {
+        color: #102c45;
+        text-shadow: none;
+    }
+    .play-round-page .mobile-game-score strong {
+        color: #a52d59;
+    }
+    .play-round-page .mobile-game-score small {
+        color: #244960;
+    }
+    .play-round-page .mobile-game-hint {
+        color: #17344d;
+    }
+    .play-round-page .mobile-game-notice {
+        color: #813b22;
+    }
+
+    /* Dark clue card, globe canvas, and button remain untouched. */
+}
+
+/* Accessibility: no animation if the device requests reduced motion. */
+@media (prefers-reduced-motion: reduce) {
+    .home-page .pixel-landing::after,
+    body:has(.play-page)::before,
+    .play-page.play-round-page {
+        animation: none;
+    }
+}
+
+/* ===============================================================
+   SHARED SKY + MOVING PIXEL CLOUDS
+   Add this section at the VERY BOTTOM of app/globals.css.
+   Requires public/pixel-clouds.svg.
+   Works alongside the existing pixel-globe-horizon.svg animation.
+   =============================================================== */
+
+:root {
+    --wtn-horizon-height: 160px;
+    --wtn-horizon-tile: 1536px;
+}
+
+/* Move one exact SVG tile each cycle for a seamless rightward loop. */
+@keyframes wtn-horizon-scroll {
+    from { background-position-x: calc(-1 * var(--wtn-horizon-tile)); }
+    to   { background-position-x: 0; }
+}
+
+/* HOME: reuse the existing full-hero scanline layer. The horizon is
+   placed ABOVE the clouds but BELOW the title, text and buttons. */
+.home-page .pixel-scanlines {
+    z-index: 1;
+    opacity: 1;
+    /* Same scanline strength as before: old .10 alpha * .32 opacity. */
+    background: repeating-linear-gradient(
+        0deg, rgba(16, 40, 58, .032) 0 1px, transparent 1px 4px
+    );
+}
+
+.home-page .pixel-scanlines::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: var(--wtn-horizon-height);
+    pointer-events: none;
+    background-image: url("/pixel-globe-horizon.svg");
+    background-repeat: repeat-x;
+    background-position: left bottom;
+    background-size: var(--wtn-horizon-tile) var(--wtn-horizon-height);
+    image-rendering: pixelated;
+    animation: wtn-horizon-scroll 100s linear infinite;
+}
+
+/* PLAY desktop + PLAY mobile menus/results: viewport-bottom ground.
+   Existing body::before clouds remain in place; main is above ground. */
+body:has(.play-page)::after {
+    content: "";
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: var(--wtn-horizon-height);
+    z-index: 0;
+    pointer-events: none;
+    background-image: url("/pixel-globe-horizon.svg");
+    background-repeat: repeat-x;
+    background-position: left bottom;
+    background-size: var(--wtn-horizon-tile) var(--wtn-horizon-height);
+    image-rendering: pixelated;
+    animation: wtn-horizon-scroll 100s linear infinite;
+}
+
+/* Ensure PLAY content stays in front of the decorative horizon. */
+body:has(.play-page) > main {
+    position: relative;
+    z-index: 1;
+}
+
+/* PHONES: reduce the ground's height to protect valuable space. */
+@media (max-width: 640px) {
+    :root {
+        --wtn-horizon-height: 80px;
+        --wtn-horizon-tile: 768px;
+    }
+
+    /* Active PLAY rounds have a fixed sky-blue panel that covers the
+       body decoration. Put clouds + horizon INSIDE its background. */
+    body:has(.play-page.play-round-page)::after {
+        display: none;
+    }
+
+    .play-page.play-round-page {
+        background-color: var(--wtn-sky, #b5e1e8);
+        background-image:
+            url("/pixel-globe-horizon.svg"),
+            url("/pixel-clouds.svg");
+        background-repeat: repeat-x, repeat;
+        background-size:
+            var(--wtn-horizon-tile) var(--wtn-horizon-height),
+            1400px 650px;
+        background-position: 0 bottom, 0 0;
+        image-rendering: pixelated;
+        animation: wtn-mobile-clouds-and-horizon 110s linear infinite;
+    }
+}
+
+/* Independently drift mobile clouds and horizon with seamless tiles. */
+@keyframes wtn-mobile-clouds-and-horizon {
+    from {
+        background-position:
+            calc(-1 * var(--wtn-horizon-tile)) bottom,
+            0 0;
+    }
+    to {
+        background-position:
+            0 bottom,
+            1400px 0;
+    }
+}
+
+/* Accessible static artwork when reduced motion is requested. */
+@media (prefers-reduced-motion: reduce) {
+    .home-page .pixel-scanlines::after,
+    body:has(.play-page)::after,
+    .play-page.play-round-page {
+        animation: none;
     }
 }

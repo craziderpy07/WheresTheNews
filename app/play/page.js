@@ -457,7 +457,7 @@ export default function PlayPage() {
         {notice && <p className="mobile-game-notice" role="status">{notice}</p>}
       </div>
 
-      // original desk top layout
+
       <div className="daily-preview-header game-desktop-header">
         <div className="section-heading">
           <span className="eyebrow">{gameTitle} · {formatDate(game.date)}</span>
@@ -497,7 +497,7 @@ export default function PlayPage() {
           </button>
           {error && <div className="form-message" role="alert">{error}</div>}
 
-          // original desk top layout
+          
           {!roundResult && (
             <div className="button-row game-desktop-actions">
               <button type="button" className="button primary full" disabled={!guess || phase !== 'guessing'} onClick={confirmGuess}>{confirmLabel}</button>

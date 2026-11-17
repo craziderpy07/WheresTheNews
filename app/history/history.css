@@ -9,7 +9,7 @@
 .history-points { display: flex; gap: 5px; align-items: baseline; white-space: nowrap; }
 .history-points strong { font-size: 1.6rem; }
 .history-points span { color: #91b0cd; font-size: .85rem; }
-.history-calendar-wrap { display: grid; grid-template-columns: minmax(300px, 1.3fr) minmax(240px, .7fr); gap: 18px; align-items: start; }
+.history-calendar-wrap { display: grid; grid-template-columns: minmax(300px, 1.3fr) minmax(300px, .7fr); gap: 18px; align-items: start; }
 .history-calendar, .history-selection { border: 1px solid #243c56; border-radius: 16px; background: #0b1c30; padding: 18px; }
 .history-calendar-header { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 20px; }
 .history-calendar-header h2 { color: #fff; margin: 0; font-size: 1.3rem; }
